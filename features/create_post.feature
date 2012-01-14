@@ -9,5 +9,5 @@ Feature: Create new post
       And I fill in "Title" with "Post title"
       And I fill in "Content" with "This is post content"
       And I press "Save"
-    Then I should be on the posts page
-      And I should see "Post title"
+    Then I should see "Post title"
+      And I should see "This is post content"

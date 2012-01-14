@@ -1,3 +1,3 @@
-Before("@without_repo") do
+Before do
   FileUtils.rm_rf Mist.repository_location
 end
