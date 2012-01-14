@@ -1,28 +1,22 @@
+require_dependency 'mist/permalink'
+
 class Post < ActiveRecord::Base
+  include Mist::Permalink
+  
   validates_presence_of :title
   validates_uniqueness_of :title
   validates_presence_of :content
-  
-  before_create do |record|
-    record.save_content_file
-    record.commit_content_file
-  end
-  
-  before_update do |record|
-    if record.content_changed?
-      record.save_content_file
-      record.commit_content_file
-    end
-  end
+  before_create :create_filesystem
+  before_update :update_filesystem
   
   attr_writer :content
   
   def content
-    @content ||= original_content
+    @content ||= content_was
   end
   
-  def original_content
-    @original_content ||= if new_record?
+  def content_was
+    @content_was ||= if new_record?
       nil
     else
       File.read content_path
@@ -30,15 +24,15 @@ class Post < ActiveRecord::Base
   end
   
   def content_changed?
-    content != original_content
-  end
-  
-  def permalink
-    title.underscore.gsub(/[^a-zA-Z0-9\.]/, '-')
+    content != content_was
   end
   
   def path
-    Mist.repository_location.join('posts', permalink)
+    Mist.repository_location.join('posts', permalink(title))
+  end
+  
+  def path_was
+    Mist.repository_location.join('posts', permalink(title_was))
   end
   
   def content_path
@@ -60,8 +54,31 @@ class Post < ActiveRecord::Base
     end
   end
   
-  def commit_content_file(commit_message = self.commit_message)
+  def commit(commit_message = self.commit_message)
     Mist.repository.add content_path
     Mist.repository.commit commit_message
+  end
+  
+  # Called when an existing record is about to be updated
+  def update_filesystem
+    should_commit = false
+    
+    if title_changed?
+      Mist.repository.lib.mv path_was, path
+      should_commit = true
+    end
+    
+    if content_changed?
+      save_content_file
+      should_commit = true
+    end
+
+    commit if should_commit
+  end
+  
+  # Called when a new record is about to be created
+  def create_filesystem
+    save_content_file
+    commit
   end
 end

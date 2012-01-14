@@ -54,5 +54,58 @@ describe Post do
         Post.find(subject.id).content.should == "changed"
       end
     end
+    
+    describe "changing its subject" do
+      before do
+        @old_content_path = subject.content_path
+        subject.title = "changed"
+        subject.save!
+      end
+      
+      it "should create a commit" do
+        Mist.log.size.should == 2
+      end
+      
+      it "should have changed the content path" do
+        @old_content_path.should_not == subject.content_path
+      end
+      
+      it "should have removed the old content path" do
+        File.should_not exist(@old_content_path)
+      end
+      
+      it "should hvae created a new content path" do
+        File.should be_file(subject.content_path)
+      end
+    end
+    
+    describe "changing its subject and its content simultaneously" do
+      before do
+        @old_content_path = subject.content_path
+        subject.title = "changed"
+        subject.content = "changed"
+        subject.save!
+      end
+      
+      it "should create a commit" do
+        Mist.log.size.should == 2
+      end
+      
+      it "should have changed the content path" do
+        @old_content_path.should_not == subject.content_path
+      end
+      
+      it "should have removed the old content path" do
+        File.should_not exist(@old_content_path)
+      end
+      
+      it "should have created a new content path" do
+        File.should be_file(subject.content_path)
+      end
+
+      it "should load the new content in a separate query" do
+        Post.find(subject.id).content.should == "changed"
+      end
+    end
   end
 end
