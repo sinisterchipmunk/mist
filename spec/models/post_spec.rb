@@ -34,8 +34,24 @@ describe Post do
         Mist.log.size.should == 1
       end
       
-      it "should load the content in a new record" do
+      it "should load the content in a separate query" do
         Post.find(subject.id).content.should == subject.content
+      end
+    end
+  end
+  
+  describe "an existing record" do
+    subject { create :post }
+    
+    describe "changing its content" do
+      before { subject.content = "changed"; subject.save! }
+      
+      it "should create a commit" do
+        Mist.log.size.should == 2
+      end
+      
+      it "should load the new content in a separate query" do
+        Post.find(subject.id).content.should == "changed"
       end
     end
   end

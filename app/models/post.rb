@@ -5,17 +5,32 @@ class Post < ActiveRecord::Base
   
   before_create do |record|
     record.save_content_file
-    record.commit_content_file "Post created"
+    record.commit_content_file
+  end
+  
+  before_update do |record|
+    if record.content_changed?
+      record.save_content_file
+      record.commit_content_file
+    end
   end
   
   attr_writer :content
   
   def content
-    @content || if new_record?
+    @content ||= original_content
+  end
+  
+  def original_content
+    @original_content ||= if new_record?
       nil
     else
       File.read content_path
     end
+  end
+  
+  def content_changed?
+    content != original_content
   end
   
   def permalink
@@ -37,7 +52,15 @@ class Post < ActiveRecord::Base
     end
   end
   
-  def commit_content_file(commit_message)
+  def commit_message
+    if new_record?
+      "Post created"
+    else
+      "Post updated"
+    end
+  end
+  
+  def commit_content_file(commit_message = self.commit_message)
     Mist.repository.add content_path
     Mist.repository.commit commit_message
   end
