@@ -3,8 +3,8 @@ require 'spec_helper'
 describe "posts/index" do
   before(:each) do
     assign(:posts, [
-      stub_model(Post),
-      stub_model(Post)
+      create(:post, :title => "one"),
+      create(:post, :title => "two")
     ])
   end
 

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "posts/edit" do
   before(:each) do
-    @post = assign(:post, stub_model(Post))
+    @post = assign(:post, create(:post))
   end
 
   it "renders the edit post form" do
