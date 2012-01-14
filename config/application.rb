@@ -10,6 +10,16 @@ if defined?(Bundler)
 end
 
 module Mist
+  autoload :Configuration, "mist/configuration"
+  autoload :Repository,    "mist/repository"
+  
+  extend Mist::Configuration
+  extend Mist::Repository
+  
+  class << self
+    delegate :log, :to => :repository
+  end
+  
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

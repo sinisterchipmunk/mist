@@ -5,7 +5,7 @@ Feature: Create new post
   
   Scenario: Create new post from index
     Given I am on the posts page
-    When I follow "Create new post"
+    When I follow "New Post"
       And I fill in "Title" with "Post title"
       And I fill in "Content" with "This is post content"
       And I press "Save"
