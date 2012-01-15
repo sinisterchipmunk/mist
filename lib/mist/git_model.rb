@@ -1,4 +1,5 @@
 class Mist::GitModel
+  autoload :Attributes,   'mist/git_model/attributes'
   autoload :ClassMethods, 'mist/git_model/class_methods'
   
   extend ActiveModel::Naming
@@ -12,6 +13,14 @@ class Mist::GitModel
   define_model_callbacks :save, :create, :update
   attribute :id, :default => proc { (count + 1).to_s }
   
+  validate do |record|
+    unless record.id.blank?
+      if record.id_changed? and self.class.find(record.id)
+        record.errors.add :id, "has already been taken"
+      end
+    end
+  end
+  
   def initialize(attributes = {})
     default_attributes!
     attributes.each do |key, value|
@@ -19,9 +28,13 @@ class Mist::GitModel
     end
   end
   
+  def class_name
+    self.class.name
+  end
+  
   def ==(other)
     if other.kind_of?(self.class)
-      id == other.id && content == other.content && title == other.title
+      attributes == other.attributes
     else
       id == other
     end
@@ -51,7 +64,7 @@ class Mist::GitModel
   def destroy
     return if new_record?
     Mist.repository.remove path, :recursive => true
-    Mist.repository.commit "Destroyed post #{title.inspect}"
+    Mist.repository.commit "Destroyed #{class_name} #{inspect}"
     FileUtils.rm_rf path
   end
   
@@ -61,23 +74,7 @@ class Mist::GitModel
   end
   
   def attributes
-    @attributes ||= {}.with_indifferent_access.tap { |attrs|
-      this = self
-      (class << attrs; self; end).class_eval do
-        alias_method :__assign, :[]=
-        define_method :[]= do |key, value|
-          unless @changing
-            @changing = true
-            begin
-              this.send :"#{key}_will_change!" unless value == attrs[key]
-            ensure
-              @changing = false
-            end
-          end
-          __assign key, value
-        end
-      end
-    }
+    @attributes ||= Mist::GitModel::Attributes.new(self)
   end
   
   def default_attributes!
@@ -88,6 +85,8 @@ class Mist::GitModel
         attributes[key] = value
       end
     end
+    
+    changed_attributes.clear
   end
   
   def persisted?
@@ -101,7 +100,7 @@ class Mist::GitModel
   def save
     return false unless valid?
     
-    if changed?
+    if new_record? || changed?
       create_or_update_callback = new_record? ? :create : :update
       run_callbacks create_or_update_callback do
         run_callbacks :save do
@@ -111,9 +110,9 @@ class Mist::GitModel
           commit
         end
       end
-      
+    
       @previously_changed = changes
-      @changed_attributes.clear
+      changed_attributes.clear
     end
     
     true
@@ -123,4 +122,7 @@ class Mist::GitModel
     raise "Record not saved: #{errors.full_messages.join('; ')}" unless save
   end
   
+  def inspect
+    "#<#{self.class.name} #{attributes.collect { |a| a.join('=') }.join(' ')}>"
+  end
 end

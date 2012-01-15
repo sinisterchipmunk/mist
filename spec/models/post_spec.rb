@@ -148,6 +148,8 @@ describe Post do
   end
   
   describe "active model lint tests" do
+    # make sure we didn't break them
+    
     include Test::Unit::Assertions
     include ActiveModel::Lint::Tests
   

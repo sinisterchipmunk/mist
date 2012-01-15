@@ -1,4 +1,20 @@
 module Mist::GitModel::ClassMethods
+  def self.extended(base) #:nodoc:
+    base.class_attribute :default_attributes
+    base.default_attributes ||= HashWithIndifferentAccess.new
+  end
+  
+  # this is necessary because without it default_attributes will be
+  # inherited and shared across all subclasses of base, which we
+  # don't exactly want.
+  def inherited(subclass) #:nodoc:
+    if subclass.default_attributes
+      subclass.default_attributes = subclass.default_attributes.dup
+    else
+      subclass.default_attributes = HashWithIndifferentAccess.new
+    end
+  end
+  
   def timestamps
     attribute :created_at, :default => proc { Time.now }
     attribute :updated_at, :default => proc { Time.now }
@@ -12,10 +28,6 @@ module Mist::GitModel::ClassMethods
     add_attribute_default(name, options)
     add_attribute_getter(name)
     add_attribute_setter(name)
-  end
-  
-  def default_attributes
-    @default_attributes ||= {}.with_indifferent_access
   end
   
   def add_attribute_getter(name)
@@ -59,7 +71,7 @@ module Mist::GitModel::ClassMethods
   end
   
   def record_path(id)
-    Mist.repository_location.join(table_name, id)
+    Mist.repository_location.join(table_name, id.to_s)
   end
   
   def find(id)
