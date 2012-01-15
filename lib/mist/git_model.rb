@@ -10,7 +10,7 @@ class Mist::GitModel
   extend Mist::GitModel::ClassMethods
   
   delegate :table_name, :record_path, :default_attributes, :to => 'self.class'
-  define_model_callbacks :save, :create, :update
+  define_model_callbacks :save, :create, :update, :initialize
   attribute :id, :default => proc { (count + 1).to_s }
   
   validate do |record|
@@ -22,9 +22,11 @@ class Mist::GitModel
   end
   
   def initialize(attributes = {})
-    default_attributes!
-    attributes.each do |key, value|
-      self.send(:"#{key}=", value)
+    run_callbacks :initialize do
+      default_attributes!
+      attributes.each do |key, value|
+        self.send(:"#{key}=", value)
+      end
     end
   end
   

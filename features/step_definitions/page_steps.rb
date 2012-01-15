@@ -33,3 +33,7 @@ end
 Then /^show me the response$/ do
   puts page.body
 end
+
+Then /^the page source should contain "([^"]*)"$/ do |src|
+  page.body.should match(Regexp.compile(Regexp.escape src))
+end

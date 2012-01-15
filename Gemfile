@@ -7,6 +7,9 @@ gem 'rails', '3.1.3'
 
 gem 'sqlite3'
 gem 'git', '~> 1.2.5'
+gem 'github-markup', '~> 0.7.0', :require => 'github/markup'
+gem 'redcarpet', '~> 2.0.1'
+gem 'activegist', '~> 0.6.0'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -37,4 +40,5 @@ group :test, :development do
   gem 'database_cleaner', '~> 0.7.0'
   gem 'rspec-rails', '~> 2.8.1'
   gem 'factory_girl_rails', '~> 1.5.0'
+  gem 'fakeweb', '~> 1.3.0'
 end

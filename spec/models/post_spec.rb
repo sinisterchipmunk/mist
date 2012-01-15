@@ -1,6 +1,95 @@
 require 'spec_helper'
 
 describe Post do
+  describe "with 1 code example" do
+    before do
+      FakeWeb.register_uri(:post, 'https://api.github.com/gists', :response => fixture('gist_with_1_code_example'))
+    end
+    
+    describe "reloading the post later" do
+      before do
+        FakeWeb.register_uri(:get, 'https://api.github.com/gists/1', :response => fixture('gist_with_1_code_example'))
+        Post.create!(:title => 'Code Example', :content => "# Test Content\n\n    file: test.rb\n    def one\n      1\n    end\n\n# Moar test content")
+      end
+      
+      subject { Post.find('code-example') }
+
+      it "should still have the gist" do
+        subject.gist.should be_persisted
+      end
+
+      it "should contain gist code" do
+        # so the blogger can later edit the gist.
+        # Also, if the gist is externally upated, it should be reflected
+        # when blog post is updated. This test shows as much because in
+        # the fakeweb response, 1 is switched with :one.
+        subject.content.should == "# Test Content\n\n    file: test.rb\n    def one\n      :one\n    end\n\n# Moar test content"
+      end
+    end
+    
+    describe "constructing a new post" do
+      before do
+        subject.title = "Code Example"
+        subject.content = "# Test Content\n\n    file: test.rb\n    def one\n      1\n    end\n\n# Moar test content"
+      end
+    
+      it { should have_code_examples }
+    
+      it "should embed the gist in html" do
+        subject.save!
+        embed = '<script src="https://gist.github.com/1.js?file=test.rb"></script>'
+        subject.content_as_html.should =~ /#{Regexp::escape embed}/
+      end
+    
+      it "should not embed gist info if there are no code examples" do
+        subject.content = "No code"
+        subject.save!
+        subject.content_as_html.should_not =~ /gist.github.com/
+      end
+    
+      it "should use the example's filename" do
+        # we don't want the fake response to modify the gist this time
+        subject.gist.stub(:save).and_return(true)
+        subject.save!
+        subject.gist.files.should have_key('test.rb')
+      end
+    
+      it "should identify 1 code example" do
+        subject.code_examples.length.should == 1
+        subject.code_examples.first.should == "def one\n  1\nend\n"
+      end
+    
+      it "should not have saved a gist yet" do
+        subject.gist.should_not be_persisted
+      end
+
+      describe "saving" do
+        it "should save a gist" do
+          subject.save!
+          subject.gist.should be_persisted
+        end
+      end
+    end
+  end
+  
+  describe "with no code examples" do
+    before do
+      subject.title = "No Code Example"
+      subject.content = "# Test Content"
+    end
+    
+    it { should_not have_code_examples }
+    
+    it "should not have a gist at all" do
+      subject.gist.should be_nil
+    end
+    
+    it "should not create a gist" do
+      subject.save!
+      subject.gist.should be_nil
+    end
+  end
+  
   describe "validation" do
     before { subject.valid? }
     

@@ -10,8 +10,9 @@ if defined?(Bundler)
 end
 
 module Mist
-  autoload :Configuration, "mist/configuration"
-  autoload :Repository,    "mist/repository"
+  autoload :Configuration,     "mist/configuration"
+  autoload :Repository,        "mist/repository"
+  autoload :CodeExampleParser, "mist/code_example_parser"
   
   extend Mist::Configuration
   extend Mist::Repository
