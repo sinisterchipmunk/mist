@@ -44,14 +44,14 @@ class Mist::CodeExampleParser
     offset = 0
     
     [].tap do |examples|
-      while match = /^    ([^\n]+(\n|\z))/m.match(content, offset)
-        in_example = examples.last && match.offset(0)[0] == offset && offset > 0
-        offset = match.offset(0)[1]
-
-        examples << Example.new(match.offset(0)[0]) unless in_example
+      while match = /^    ([^\n]+(\n|\z))/m.match(content[offset..-1])
+        in_example = examples.last && match.offset(0)[0] == 0 && offset > 0
+        examples << Example.new(match.offset(0)[0]+offset) unless in_example
         line = match[1]
         examples.last.whitespace_skipped += 4
         examples.last.concat match[1]
+
+        offset += match.offset(0)[1]
       end
       
       # detect multiple examples separated only by white space
