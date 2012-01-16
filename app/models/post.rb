@@ -32,11 +32,15 @@ class Post < Mist::GitModel
     attributes[:content] = c.gsub(/\r/, "")
   end
   
+  def generated_gist_description
+    'Code examples for "%s" - %s' % [title, url]
+  end
+  
   def gist
     @gist ||= begin
       if gist_id.blank?
         if has_code_examples?
-          ActiveGist.new(:description => "Code examples for blog post: #{title}", :public => true)
+          ActiveGist.new(:description => generated_gist_description, :public => true)
         else
           nil
         end
@@ -109,6 +113,10 @@ class Post < Mist::GitModel
       gist.files[example.filename] = { :content => example }
     end
     gist.files
+  end
+  
+  def url(options = {})
+    Mist::Application.routes.url_helpers.post_path(id, options.reverse_merge(:only_path => false))
   end
   
   def update_gist_if_necessary

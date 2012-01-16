@@ -102,6 +102,22 @@ describe Post do
         subject.content = "# Test Content\n\n    file: test.rb\n    def one\n      1\n    end\n\n# Moar test content"
       end
       
+      describe "the gist description" do
+        let(:desc) { subject.gist.description }
+        
+        it "include link to post" do
+          desc.should =~ /example.com\/posts\/code-example/
+        end
+
+        it "should not include code example filename" do
+          subject.gist.description.should_not =~ /test.rb/
+        end
+      end
+
+      it "should know its own url" do
+        subject.url.should == "http://example.com/posts/code-example"
+      end
+
       it { should have_code_examples }
     
       it "should embed the gist in html" do
