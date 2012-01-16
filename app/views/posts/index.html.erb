@@ -1,15 +1,33 @@
-<h1>Listing posts</h1>
+<% content_for :header do %>
+  <div id="header" class="bordered">
+    <div class="banner">
+      <%= link_to 'Blog Title', posts_path %>
+      
+      <div class="author">
+        with <%= link_to 'John Doe', '/' %>
+      </div>
+    </div>
 
-<table>
-<% @posts.each do |post| %>
-  <tr>
-    <td><%= link_to post.title, post %></td>
-    <td><%= link_to 'Edit', edit_post_path(post) %></td>
-    <td><%= link_to 'Destroy', post, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
+    <div class="admin">
+      <%= authorized_link :create_post, 'New Post', new_post_path %>
+    </div>
+  </div>
 <% end %>
-</table>
 
-<br />
-
-<%= link_to 'New Post', new_post_path %>
+<% @posts.each do |post| %>
+  <div class="post bordered">
+    <div class="title">
+      <h1>
+        <%= link_to post.title, post %>
+      </h1>
+      <%= authorized_links admin_link_separator,
+                      [:edit_post, 'Edit', edit_post_path(post)],
+                      [:destroy_post, "Destroy", post, {:confirm => 'Are you sure?', :method => :delete}]
+      %>
+    </div>
+  
+    <div class="preview">
+      <%= post.content_as_html_preview %>
+    </div>
+  </div>
+<% end %>

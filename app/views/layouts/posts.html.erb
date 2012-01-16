@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mist</title>
+  <%= stylesheet_link_tag    "application" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+  <%= yield :header %>
+
+  <div id="sidebar">
+    <%= yield :sidebar_header %>
+  
+    <div class="sidebar bordered">
+      <h3>Similar Posts</h3>
+      <ul>
+        <li> <%= link_to "Rolling the Dice", '/' %> </li>
+        <li> <%= link_to "What Makes Developers Tick", '/' %> </li>
+      </ul>
+    </div>
+
+    <div class="sidebar bordered">
+      <h3>Popular Posts</h3>
+      <ul>
+        <li> <%= link_to "The Problem With The World Today", '/' %> </li>
+        <li> <%= link_to "Why Robots Are Cool", '/' %> </li>
+      </ul>
+    </div>
+  
+    <div class="sidebar bordered">
+      <h3>Recent Posts</h3>
+      <ul>
+        <li> <%= link_to "Factory Girl Rocked My World", '/' %> </li>
+        <li> <%= link_to "Pushing Gems With Extreme Prejudice and Other Tales of Heroism and Hatred", '/' %> </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="content">
+    <%= yield %>
+  </div>
+</body>
+</html>

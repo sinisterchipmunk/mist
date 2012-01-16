@@ -1,0 +1,83 @@
+#= require 'scaffolds'
+
+$blue: #3bbfce
+$orange: #ffb873
+$margin: 16px
+
+body
+  font-family: Arial, sans-serif
+  color: darken($blue, 30%)
+
+a
+  color: #60B9CE
+  &:link
+    color: #60B9CE
+  &:hover
+    color: #60B9CE
+
+.bordered
+  border: 1px solid $blue
+  border-radius: 6px
+  padding: $margin / 2
+  margin: $margin / 2
+
+.banner
+  clear: both
+  text-align: center
+  display: block
+  font-size: 18pt
+
+  a
+    color: darken($orange, 20%)
+    text-decoration: none
+    
+  .author
+    display: inline
+    font-size: 60%
+    font-style: italic
+
+#header
+  clear: both
+  
+  .banner
+    padding-bottom: 0.2in
+    margin-top: $margin
+    font-size: 28pt
+    
+  .admin
+    width: auto
+    text-align: center
+
+#sidebar
+  float: left
+  width: 250px
+  
+  ul
+    padding-left: 20px
+  
+.sidebar
+  margin-bottom: $margin
+  h3
+    margin-top: 0
+
+.content
+  width: auto
+  overflow: auto
+  
+  .other-posts
+    display: block
+    #next-post, #previous-post
+      font-size: 12pt
+    #previous-post
+      float: right
+
+.post
+
+.title
+  h1
+    font-size: 24pt
+    display: inline
+    color: darken($blue, 10%)
+    a
+      color: darken($blue, 10%)
+      text-decoration: none

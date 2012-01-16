@@ -1,12 +1,31 @@
-<p id="notice"><%= notice %></p>
+<% content_for :sidebar_header do %>
+  <div class="banner sidebar bordered">
+    <%= link_to 'Blog Title', posts_path %>
+  </div>
+<% end %>
 
-<div class="title">
-  <%= @post.title %>
-</div>
+<div class="post bordered">
+  <div class="title">
+    <h1>
+      <%= @post.title %>
+    </h1>
+  
+    <%= authorized_links admin_link_separator,
+                         [:edit_post, 'Edit', edit_post_path(@post)],
+                         [:destroy_post, 'Destroy', @post, {:confirm => 'Are you sure?', :method => :delete}] %>
+  </div>
 
-<div class="content">
+  <p id="notice"><%= notice %></p>
+
   <%= @post.content_as_html %>
 </div>
 
-<%= link_to 'Edit', edit_post_path(@post) %> |
-<%= link_to 'Back', posts_path %>
+<div class="other-posts">
+  <div id="previous-post">
+    <%= link_to "Why Managers Suck", '/' %>
+  </div>
+
+  <div id="next-post">
+    <%= link_to "What Makes Developers Tick", '/' %>
+  </div>
+</div>
