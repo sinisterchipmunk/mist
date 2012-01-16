@@ -10,7 +10,7 @@ class Mist::GitModel
   extend Mist::GitModel::ClassMethods
   
   delegate :table_name, :record_path, :default_attributes, :to => 'self.class'
-  define_model_callbacks :save, :create, :update, :initialize
+  define_model_callbacks :save, :create, :update, :initialize, :validation, :destroy
   attribute :id, :default => proc { (count + 1).to_s }
   
   validate do |record|
@@ -65,9 +65,11 @@ class Mist::GitModel
   
   def destroy
     return if new_record?
-    Mist.repository.remove path, :recursive => true
-    Mist.repository.commit "Destroyed #{class_name} #{inspect}"
-    FileUtils.rm_rf path
+    run_callbacks :destroy do
+      Mist.repository.remove path, :recursive => true
+      Mist.repository.commit "Destroyed #{class_name} #{inspect}"
+      FileUtils.rm_rf path
+    end
   end
   
   def update_attributes(attributes)
@@ -100,7 +102,9 @@ class Mist::GitModel
   end
   
   def save
-    return false unless valid?
+    valid = false
+    run_callbacks(:validation) { valid = valid? }
+    return false unless valid
     
     if new_record? || changed?
       create_or_update_callback = new_record? ? :create : :update

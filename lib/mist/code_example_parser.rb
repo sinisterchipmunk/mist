@@ -5,7 +5,7 @@ class Mist::CodeExampleParser
     attr_accessor :start_offset
     attr_accessor :whitespace_skipped
     attr_writer :filename
-    FILENAME_REGEXP = /\A[\s\t\n]*file: (.*?)\n/
+    FILENAME_REGEXP = /\A[\s\t\n]*file: (.*?)[\n\r]+/
     
     def initialize(start_offset)
       @whitespace_skipped = 0

@@ -16,6 +16,19 @@ describe Mist::CodeExampleParser do
     it { should have(0).examples }
   end
   
+  describe "with crlf" do
+    subject { Mist::CodeExampleParser.new("# Test\r\n\r\n    file: test.rb\r\n    one = :one\r\n") }
+    
+    it "should strip cr from filenames" do
+      subject.examples[0].filename.should == "test.rb"
+    end
+    
+    it "should not leave cr or lf preceding code" do
+      subject.examples[0][0].should_not == ?\r
+      subject.examples[0][0].should_not == ?\n
+    end
+  end
+  
   let(:basic_code) { "    def one\n      1\n    end" }
   let(:content) { basic_code }
   subject { Mist::CodeExampleParser.new(content).examples }

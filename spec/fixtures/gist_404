@@ -1,0 +1,6 @@
+HTTP/1.1 404 Resource Not Found
+Link: <https://api.github.com/resource?page=2>; rel="next",
+      <https://api.github.com/resource?page=5>; rel="last"
+X-RateLimit-Limit: 5000
+X-RateLimit-Remaining: 4999
+Content-type: application/json; charset=utf-8

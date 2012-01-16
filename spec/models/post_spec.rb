@@ -1,6 +1,19 @@
 require 'spec_helper'
 
 describe Post do
+  it "preview" do
+    subject.content = "# This is a header and stuff\r\nHere's a paragraph, or it would be if
+      I had anything much to talk about, but it's really not right now because I'm busy.
+      Go away.\r\n\r\nHere's some sample code to keep you sated:\r\n\r\n    file: test.rb\r\n
+      \   one = :one\r\n\r\n## and this is another header"
+    proc { subject.content_as_html_preview }.should_not raise_error
+  end
+  
+  it "should omit cr's" do
+    subject.content = "a\r\nb"
+    subject.content.should == "a\nb"
+  end
+  
   describe "with 1 code example" do
     before do
       FakeWeb.register_uri(:post, 'https://api.github.com/gists', :response => fixture('gist_with_1_code_example'))
@@ -13,6 +26,62 @@ describe Post do
       end
       
       subject { Post.find('code-example') }
+      
+      describe "and then adding a new code example" do
+        before { subject.content << "\n    file: moar-file.rb\n    moar = :more\n\nDone" }
+        
+        it "should find 2 code examples" do
+          subject.code_examples.should have(2).examples
+        end
+        
+        it "should create a new gist file" do
+          subject.set_gist_file_contents
+          subject.gist.files.should have_key('moar-file.rb')
+          subject.gist.files['moar-file.rb'].should have_key(:content)
+          subject.gist.files['moar-file.rb'][:content].should == "moar = :more\n"
+        end
+      end
+      
+      describe "and then removing the code example" do
+        before { subject.content = "no code examples here" }
+        
+        it "should find 0 code examples" do
+          subject.code_examples.should be_empty
+        end
+        
+        it "should mark gist files for deletion" do
+          subject.set_gist_file_contents
+          subject.gist.files.should have_key('test.rb')
+          subject.gist.files['test.rb'].should be_nil
+        end
+      end
+      
+      describe "with the gist now missing" do
+        before do
+          FakeWeb.register_uri(:get, 'https://api.github.com/gists/1', :response => fixture('gist_404'))
+        end
+        
+        it "should not raise an error" do
+          proc { subject }.should_not raise_error
+        end
+        
+        it "should embed code using regular markdown" do
+          subject.content_as_html.should_not =~ /gist.github.com/
+        end
+        
+        describe "when saving the record" do
+          it "should create a new gist" do
+            subject.save!
+            subject.gist.should be_persisted
+          end
+        end
+      end
+      
+      it "should ensure a blank line before and after gist embeds" do
+        # otherwise not having the blanks will cause markdown to not handle headers properly
+        content = subject.content_with_embedded_gists
+        content.should =~ /\n\n<script.*?<\/script>\n\n/
+      end
 
       it "should still have the gist" do
         subject.gist.should be_persisted
@@ -32,13 +101,34 @@ describe Post do
         subject.title = "Code Example"
         subject.content = "# Test Content\n\n    file: test.rb\n    def one\n      1\n    end\n\n# Moar test content"
       end
-    
+      
       it { should have_code_examples }
     
       it "should embed the gist in html" do
         subject.save!
         embed = '<script src="https://gist.github.com/1.js?file=test.rb"></script>'
         subject.content_as_html.should =~ /#{Regexp::escape embed}/
+      end
+      
+      it "should not embed the gist in html preview" do
+        subject.save!
+        subject.content_as_html_preview.should_not =~ /gist.github.com/
+      end
+      
+      it "should not embed code in html preview" do
+        subject.save!
+        subject.content_as_html_preview.should_not =~ /file: test.rb/
+        subject.content_as_html_preview.should_not =~ /def one/
+      end
+      
+      it "should include the first line in html preview" do
+        subject.save!
+        subject.content_as_html_preview.should =~ /Test Content/
+      end
+      
+      it "should not include moar content in the html preview" do
+        subject.save!
+        subject.content_as_html_preview.should_not =~ /Moar test content/
       end
     
       it "should not embed gist info if there are no code examples" do
