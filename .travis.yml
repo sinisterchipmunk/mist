@@ -7,3 +7,6 @@ rvm:
   - ruby-head
   - rbx-2.0
 
+before_script:
+  - rake db:migrate && rake db:test:prepare
+
