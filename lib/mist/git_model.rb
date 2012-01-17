@@ -1,17 +1,20 @@
 class Mist::GitModel
-  autoload :Attributes,   'mist/git_model/attributes'
-  autoload :ClassMethods, 'mist/git_model/class_methods'
+  require_dependency 'mist/git_model/attributes'
+  require_dependency 'mist/git_model/class_methods'
   
-  extend ActiveModel::Naming
   extend ActiveModel::Callbacks
+  extend ActiveModel::Naming
   include ActiveModel::Validations
+  include ActiveModel::Validations::Callbacks
   include ActiveModel::Dirty
   include ActiveModel::Conversion
   extend Mist::GitModel::ClassMethods
   
+  define_model_callbacks :save, :create, :update, :initialize, :destroy
+
   delegate :table_name, :record_path, :default_attributes, :to => 'self.class'
-  define_model_callbacks :save, :create, :update, :initialize, :validation, :destroy
   attribute :id, :default => proc { (count + 1).to_s }
+  attribute :id_on_record
   
   validate do |record|
     unless record.id.blank?
@@ -102,9 +105,7 @@ class Mist::GitModel
   end
   
   def save
-    valid = false
-    run_callbacks(:validation) { valid = valid? }
-    return false unless valid
+    return false unless valid?
     
     if new_record? || changed?
       create_or_update_callback = new_record? ? :create : :update
@@ -112,16 +113,37 @@ class Mist::GitModel
         run_callbacks :save do
           FileUtils.mkdir_p File.dirname(path)
           Mist.repository.lib.mv path_was, path if !new_record? && id_changed?
-          File.open(path, "w") { |f| f.print attributes.to_yaml }
+          save_record_file
           commit
         end
       end
-    
-      @previously_changed = changes
-      changed_attributes.clear
     end
     
+    if !(files = Mist.repository.lib.diff_files).empty?
+      # if false, there's nothing we can reliably do to sync up unless we
+      # forcefully commit all changes, which the user may not want. However,
+      # if true, then this record was probably renamed from id_on_record
+      # to id. So, commit the deletion.
+      old_path = record_path(id_on_record).to_s.sub(/^#{Regexp::escape Mist.repository_location.to_s}\/?/, '')
+      if files.keys.include?(old_path) && files[old_path][:type] == 'D'
+        save_record_file
+        Mist.repository.lib.remove old_path
+        Mist.repository.lib.add path
+        Mist.repository.commit "Syncing to external filesystem changes"
+      else
+        Rails.logger.warn "Found uncommitted changes in git repo but didn't recognize them, so didn't commit them"
+        # no need to show the diff in the log, as the Git library has done that for us
+      end
+    end
+    
+    @previously_changed = changes
+    changed_attributes.clear
     true
+  end
+  
+  def save_record_file
+    self.id_on_record = id
+    File.open(path, "w") { |f| f.print attributes.to_yaml }
   end
   
   def save!

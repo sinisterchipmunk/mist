@@ -1,5 +1,6 @@
 require_dependency 'mist/permalink'
 require_dependency 'mist/git_model'
+require_dependency "mist/code_example_parser"
 
 class Post < Mist::GitModel
   include Mist::Permalink
@@ -8,7 +9,7 @@ class Post < Mist::GitModel
   validates_presence_of :content
   
   validate do |record|
-    if record.new_record? && self.class.find(record.id)
+    if record.new_record? && self.class.exist?(record.id)
       record.errors.add :title, 'has already been taken'
     end
   end
@@ -19,12 +20,12 @@ class Post < Mist::GitModel
   attribute :published_at
   attribute :gist_id
   
+  before_validation { |r| r.id = permalink(r.title) unless r.title.blank? }
   after_validation :update_gist_if_necessary
   after_initialize :load_code_examples_from_gist
   after_destroy :destroy_gist
   
   def title=(value)
-    self.id = permalink(value)
     attributes[:title] = value
   end
   
@@ -107,7 +108,8 @@ class Post < Mist::GitModel
   
   # Assigns the file contents of each file in the gist according to what's found in
   # #content. Does not save the gist. Returns the list of files themselves.
-  def set_gist_file_contents
+  def set_gist_data
+    gist.description = generated_gist_description
     gist.files.keys.each { |filename| gist.files[filename] = nil }
     code_examples.each do |example|
       gist.files[example.filename] = { :content => example }
@@ -123,10 +125,7 @@ class Post < Mist::GitModel
     return unless errors.empty?
     
     if has_code_examples?
-      set_gist_file_contents
-      
-      # mark any additional files for deletion
-      # gist.files.send(:hash).each { |key, info| gist.files.send(:hash).delete(key) unless filenames.include?(key) }
+      set_gist_data
       
       if gist.changed?
         errors.add(:gist, "could not be saved: #{gist.errors.full_messages.join('; ')}") unless gist.save

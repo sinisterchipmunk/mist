@@ -9,10 +9,11 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+require 'git'
+
 module Mist
-  autoload :Configuration,     "mist/configuration"
-  autoload :Repository,        "mist/repository"
-  autoload :CodeExampleParser, "mist/code_example_parser"
+  require 'mist/configuration'
+  require 'mist/repository'
   
   extend Mist::Configuration
   extend Mist::Repository

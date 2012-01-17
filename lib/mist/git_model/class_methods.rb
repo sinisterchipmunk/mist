@@ -65,7 +65,10 @@ module Mist::GitModel::ClassMethods
   end
   
   def load(path)
-    new(YAML.load(File.read(path))).tap do |instance|
+    # id is always the filename, ensure id isn't changed by yaml
+    attributes = YAML.load(File.read(path))
+    attributes['id'] = File.basename(path)
+    new(attributes).tap do |instance|
       instance.changed_attributes.clear
     end
   end
@@ -75,11 +78,17 @@ module Mist::GitModel::ClassMethods
   end
   
   def find(id)
-    if File.file?(path = record_path(id))
+    if path = exist?(id)
       load path
     else
       nil
     end
+  end
+  
+  # If the id exists, its file path is returned. Otherwise, nil.
+  def exist?(id)
+    path = record_path(id)
+    File.exist?(path) ? path : nil
   end
   
   def last

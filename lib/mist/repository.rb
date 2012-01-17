@@ -1,5 +1,3 @@
-require 'git'
-
 module Mist::Repository
   def repository
     @repository ||= begin

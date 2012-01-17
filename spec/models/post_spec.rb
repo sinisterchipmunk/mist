@@ -27,6 +27,29 @@ describe Post do
       
       subject { Post.find('code-example') }
       
+      describe "changing its title" do
+        before { subject.title = "new title" }
+
+        it "should not change its id" do
+          subject.id.should == "code-example"
+        end
+        
+        describe "and then saving the post" do
+          before do
+            subject.gist.should_receive(:save).and_return(true)
+            subject.save!
+          end
+          
+          it "should update the gist's description" do
+            subject.gist.description.should =~ /new title/
+          end
+
+          it "should change its id" do
+            subject.id.should == "new-title"
+          end
+        end
+      end
+
       describe "and then adding a new code example" do
         before { subject.content << "\n    file: moar-file.rb\n    moar = :more\n\nDone" }
         
@@ -35,10 +58,30 @@ describe Post do
         end
         
         it "should create a new gist file" do
-          subject.set_gist_file_contents
+          subject.gist.should_receive(:save).and_return(true)
+          subject.save
           subject.gist.files.should have_key('moar-file.rb')
           subject.gist.files['moar-file.rb'].should have_key(:content)
           subject.gist.files['moar-file.rb'][:content].should == "moar = :more\n"
+        end
+        
+        describe "saving and then removing one code example" do
+          before do
+            subject.gist.should_receive(:save).twice.and_return(true)
+            subject.save
+            subject.content["\n    file: moar-file.rb\n    moar = :more\n"] = "\n"
+            subject.save
+          end
+          
+          it "should mark moar-file.rb for deletion" do
+            subject.gist.files.should have_key('moar-file.rb')
+            subject.gist.files['moar-file.rb'].should be_nil
+          end
+          
+          it "should not mark test.rb for deletion" do
+            subject.gist.files.should have_key('test.rb')
+            subject.gist.files['test.rb'].should_not be_nil
+          end
         end
       end
       
@@ -49,10 +92,9 @@ describe Post do
           subject.code_examples.should be_empty
         end
         
-        it "should mark gist files for deletion" do
-          subject.set_gist_file_contents
-          subject.gist.files.should have_key('test.rb')
-          subject.gist.files['test.rb'].should be_nil
+        it "should delete the gist" do
+          subject.gist.should_receive(:destroy).and_return(true)
+          subject.save
         end
       end
       
@@ -102,22 +144,29 @@ describe Post do
         subject.content = "# Test Content\n\n    file: test.rb\n    def one\n      1\n    end\n\n# Moar test content"
       end
       
-      describe "the gist description" do
-        let(:desc) { subject.gist.description }
+      describe "after saving" do
+        before do
+          subject.gist.should_receive(:save).and_return(true)
+          subject.save
+        end
         
-        it "include link to post" do
-          desc.should =~ /example.com\/posts\/code-example/
+        it "should know its own url" do
+          subject.url.should == "http://example.com/posts/code-example"
         end
 
-        it "should not include code example filename" do
-          subject.gist.description.should_not =~ /test.rb/
+        describe "the gist description" do
+          let(:desc) { subject.gist.description }
+
+          it "include link to post" do
+            desc.should =~ /example.com\/posts\/code-example/
+          end
+
+          it "should not include code example filename" do
+            subject.gist.description.should_not =~ /test.rb/
+          end
         end
-      end
 
-      it "should know its own url" do
-        subject.url.should == "http://example.com/posts/code-example"
       end
-
       it { should have_code_examples }
     
       it "should embed the gist in html" do

@@ -15,6 +15,16 @@ describe Mist::GitModel do
   end
 
   describe "validation" do
+    it "should be wrapped in callbacks" do
+      before = after = false
+      model_class.before_validation { before = true }
+      model_class.after_validation { after = true }
+      
+      model_class.new.valid?
+      before.should be_true
+      after.should be_true
+    end
+    
     it "should not require id" do
       subject.valid?
       subject.errors[:id].should_not include("can't be blank")
@@ -85,6 +95,46 @@ describe Mist::GitModel do
   
   describe "an existing record" do
     subject { model_class.create! }
+    
+    describe "altered on file system" do
+      it "should load id from filename, not from file contents" do
+        # create a tainted record directly on the filesystem
+        yaml = YAML.load(File.read(subject.path))
+        yaml['id'] = '2'
+        new_path = File.expand_path('3', File.dirname(subject.path))
+        File.open(new_path, "w") { |f| f.print yaml.to_yaml }
+        
+        # now load it
+        model_class.find('3').id.should == '3'
+      end
+      
+      describe "files renamed on file system but not committed to git" do
+        before do
+          FileUtils.mv subject.path, File.expand_path('2', File.dirname(subject.path))
+          model
+        end
+        
+        let :model do
+          model = model_class.find('2')
+          model.save!
+          model
+        end
+        
+        it "should use the renamed file's id" do
+          model.id.should == '2'
+        end
+        
+        it "should commit the new file to git" do
+          File.should exist(File.expand_path('2', File.dirname(model.path)))
+          Mist.repository.lib.diff_files.should be_empty
+        end
+        
+        it "should remove the missing file from git" do
+          File.should_not exist(subject.path)
+          Mist.repository.lib.diff_files.should be_empty
+        end
+      end
+    end
     
     describe "destroying" do
       before { subject.destroy }
