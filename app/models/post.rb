@@ -29,6 +29,26 @@ class Post < Mist::GitModel
     attributes[:title] = value
   end
   
+  def published?
+    !published_at.blank?
+  end
+  
+  def draft?
+    !published?
+  end
+  
+  def publish
+    self.published_at = Time.now unless published?
+  end
+  
+  def unpublish
+    self.published_at = nil
+  end
+  
+  def published=(bool)
+    bool ? publish : unpublish
+  end
+  
   def content=(c)
     attributes[:content] = c.gsub(/\r/, "")
   end

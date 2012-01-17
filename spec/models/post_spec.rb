@@ -14,6 +14,39 @@ describe Post do
     subject.content.should == "a\nb"
   end
   
+  it "should default to draft" do
+    subject.should_not be_published
+    subject.should be_draft
+  end
+  
+  it "should be published if publish date set" do
+    subject.published_at = Time.now
+    subject.should be_published
+    subject.should_not be_draft
+  end
+  
+  it "should be published now" do
+    time = Time.now
+    Time.stub!(:now).and_return(time) # to account for microseconds
+    subject.published = true
+    subject.published_at.should == time
+  end
+  
+  describe "after publication" do
+    before { subject.published = true }
+    
+    it "should nil out publication date" do
+      subject.published = false
+      subject.published_at.should be_blank
+    end
+    
+    it "should not modify publication date" do
+      time = subject.published_at
+      subject.published = true
+      subject.published_at.should == time
+    end
+  end
+  
   describe "with 1 code example" do
     before do
       FakeWeb.register_uri(:post, 'https://api.github.com/gists', :response => fixture('gist_with_1_code_example'))

@@ -14,6 +14,4 @@
   </div>
 <% end %>
 
-<% @posts.each_with_index do |post, index| %>
-  <%= render :partial => 'post', :locals => { :post => post, :preview => index != 0 }%>
-<% end %>
+<%= render_posts %>
