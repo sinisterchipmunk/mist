@@ -29,6 +29,6 @@ module PostsHelper
       else
         ""
       end
-    }.join
+    }.join.html_safe
   end
 end

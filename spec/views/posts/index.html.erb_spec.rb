@@ -6,7 +6,7 @@ describe "posts/index" do
   before(:each) do
     list = []
     NUMBERS.each do |n|
-      list << create(:post, :title => n, :content => "#{n}-Paragraph1\n\n#{n}-Paragraph2")
+      list << create(:post, :title => n, :published => true, :content => "#{n}-Paragraph1\n\n#{n}-Paragraph2")
     end
     assign(:posts, list)
   end

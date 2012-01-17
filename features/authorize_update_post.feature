@@ -4,7 +4,7 @@ Feature: Update existing post
   I want to authorize who can update an existing post
   
   Background:
-    Given I have created a post called "Post title"
+    Given I have published a post called "Post title"
   
   Scenario: Change post when not authorized
     Given I am not authorized

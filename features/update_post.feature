@@ -4,7 +4,7 @@ Feature: Update existing post
   I want to update an existing post
 
   Background:
-    Given I have created a post called "Post title"
+    Given I have published a post called "Post title"
   
   Scenario: Update existing post from index
     When I edit the "Post title" post
