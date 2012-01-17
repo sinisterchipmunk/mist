@@ -7,3 +7,7 @@ rvm:
   - ruby-head
   - rbx-2.0
 
+gemfile:
+  - gemfiles/rails-3.1.3
+  - gemfiles/rails-3.2.0
+
