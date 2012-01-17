@@ -1,0 +1,19 @@
+<div class="post bordered">
+  <div class="title">
+    <h1>
+      <%= link_to post.title, post_path(post.id) %>
+    </h1>
+  
+    <%= authorized_links admin_link_separator,
+                         [:edit_post, 'Edit', edit_post_path(post)],
+                         [:destroy_post, 'Destroy', post, {:confirm => 'Are you sure?', :method => :delete}] %>
+  </div>
+  
+  <%= yield :subcaption %>
+
+  <% if preview %>
+    <%= post.content_as_html_preview %>
+  <% else %>
+    <%= post.content_as_html %>
+  <% end %>
+</div>

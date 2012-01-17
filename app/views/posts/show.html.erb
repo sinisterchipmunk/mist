@@ -4,21 +4,11 @@
   </div>
 <% end %>
 
-<div class="post bordered">
-  <div class="title">
-    <h1>
-      <%= @post.title %>
-    </h1>
-  
-    <%= authorized_links admin_link_separator,
-                         [:edit_post, 'Edit', edit_post_path(@post)],
-                         [:destroy_post, 'Destroy', @post, {:confirm => 'Are you sure?', :method => :delete}] %>
-  </div>
-
+<% content_for :subcaption do %>
   <p id="notice"><%= notice %></p>
+<% end %>
 
-  <%= @post.content_as_html %>
-</div>
+<%= render :partial => 'post', :locals => { :post => @post, :preview => false } %>
 
 <div class="other-posts">
   <div id="previous-post">

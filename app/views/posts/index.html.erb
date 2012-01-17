@@ -14,20 +14,6 @@
   </div>
 <% end %>
 
-<% @posts.each do |post| %>
-  <div class="post bordered">
-    <div class="title">
-      <h1>
-        <%= link_to post.title, post %>
-      </h1>
-      <%= authorized_links admin_link_separator,
-                      [:edit_post, 'Edit', edit_post_path(post)],
-                      [:destroy_post, "Destroy", post, {:confirm => 'Are you sure?', :method => :delete}]
-      %>
-    </div>
-  
-    <div class="preview">
-      <%= post.content_as_html_preview %>
-    </div>
-  </div>
+<% @posts.each_with_index do |post, index| %>
+  <%= render :partial => 'post', :locals => { :post => post, :preview => index != 0 }%>
 <% end %>
