@@ -1,7 +1,7 @@
 class Mist::GitModel::Attributes < HashWithIndifferentAccess
   def initialize(model)
     @model = model
-    super
+    super()
   end
   
   def []=(key, value)
@@ -15,7 +15,7 @@ class Mist::GitModel::Attributes < HashWithIndifferentAccess
   # is deserialized, this class will be instantiated, resulting in an
   # error. (This class should only be instantiated directly by
   # `Mist::GitModel`.)
-  def to_yaml
-    HashWithIndifferentAccess.new(self).to_yaml
+  def to_yaml(*args)
+    HashWithIndifferentAccess.new(self).to_yaml(*args)
   end
 end

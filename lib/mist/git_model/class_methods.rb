@@ -61,6 +61,31 @@ module Mist::GitModel::ClassMethods
     name.underscore.pluralize
   end
   
+  # Returns meta data for this model.
+  def [](type)
+    @meta ||= {}
+    # p @meta, meta_file_path(type), File.file?(meta_file_path(type)) ?  File.read(meta_file_path(type)) : nil
+    @meta[type] ||= if File.file?(meta_file_path(type))
+      YAML.load(File.read(meta_file_path(type))) || {}
+    else
+      {}
+    end.with_indifferent_access
+  end
+  
+  # Assigns, saves and commits meta data for this model.
+  def save_meta_data(type)
+    FileUtils.mkdir_p File.dirname(meta_file_path(type))
+    File.open(meta_file_path(type), 'w') { |f| f.print self[type].to_yaml }
+    if Mist.commit_meta_data
+      Mist.repository.add meta_file_path(type)
+      Mist.repository.commit '%s meta changes to %s' % [type, table_name]
+    end
+  end
+  
+  def meta_file_path(type)
+    Mist.repository_location.join('.meta', table_name, type.to_s)
+  end
+  
   def all
     # it's dangerous to rely on Dir[] because we have no guarantee of the
     # returned order. Git will be more reliable.
@@ -68,9 +93,9 @@ module Mist::GitModel::ClassMethods
     files.collect! { |path| load Mist.repository_location.join(path) }
   end
   
-  def load(path)
+  def load(path, attributes = {})
     # id is always the filename, ensure id isn't changed by yaml
-    attributes = YAML.load(File.read(path))
+    attributes = attributes.with_indifferent_access.reverse_merge(YAML.load(File.read(path)))
     attributes['id'] = File.basename(path)
     new(attributes).tap do |instance|
       instance.changed_attributes.clear
@@ -81,9 +106,9 @@ module Mist::GitModel::ClassMethods
     Mist.repository_location.join(table_name, id.to_s)
   end
   
-  def find(id)
+  def find(id, new_attributes = {})
     if path = exist?(id)
-      load path
+      load path, new_attributes
     else
       nil
     end

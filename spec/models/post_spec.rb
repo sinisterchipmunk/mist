@@ -9,6 +9,56 @@ describe Post do
     proc { subject.content_as_html_preview }.should_not raise_error
   end
   
+  describe "popularity" do
+    before do
+      subject.title = "post title"
+      subject.content = "content"
+    end
+    
+    it "should start at 0" do
+      subject.popularity.should == 0
+    end
+    
+    it "should order by descending popularity" do
+      5.times { |i| Post.create!(:title => "title#{i}", :content => "content", :popularity => i) }
+      
+      popular = Post.most_popular(5)
+      popular[0].popularity.should == 4
+      popular[1].popularity.should == 3
+      popular[2].popularity.should == 2
+      popular[3].popularity.should == 1
+      popular[4].popularity.should == 0
+    end
+    
+    describe "after saving" do
+      before { subject.save! }
+      
+      it "should be included in popular posts" do
+        Post.most_popular(5).should include(subject)
+      end
+      
+      describe "and then deleting" do
+        before { subject.destroy }
+        
+        it "should omit subject from popular posts" do
+          Post.most_popular(5).should be_empty
+        end
+      end
+
+      describe "after popularity has changed" do
+        before { subject.popularity = 5; subject.save! }
+        
+        it "should load the popularity" do
+          Post.find(subject.id).popularity.should == 5
+        end
+        
+        it "should return the post as among the most popular" do
+          Post.most_popular(5).should include(subject)
+        end
+      end
+    end
+  end
+  
   it "should omit cr's" do
     subject.content = "a\r\nb"
     subject.content.should == "a\nb"

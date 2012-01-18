@@ -71,7 +71,7 @@ class Mist::GitModel
     return if new_record?
     run_callbacks :destroy do
       Mist.repository.remove path, :recursive => true
-      Mist.repository.commit "Destroyed #{class_name} #{inspect}"
+      Mist.repository.commit "Destroyed #{class_name} #{id.inspect}"
       FileUtils.rm_rf path
     end
   end
@@ -152,6 +152,6 @@ class Mist::GitModel
   end
   
   def inspect
-    "#<#{self.class.name} #{attributes.collect { |a| a.join('=') }.join(' ')}>"
+    "#<#{self.class.name} #{attributes.collect { |a| [a[0], a[1].inspect].join('=') }.join(' ')}>"
   end
 end

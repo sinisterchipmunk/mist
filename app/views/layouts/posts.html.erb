@@ -20,13 +20,16 @@
       </ul>
     </div>
 
-    <div id="sidebar-popular-posts" class="sidebar bordered">
-      <h3>Popular Posts</h3>
-      <ul>
-        <li> <%= link_to "The Problem With The World Today", '/' %> </li>
-        <li> <%= link_to "Why Robots Are Cool", '/' %> </li>
-      </ul>
-    </div>
+    <% unless popular_posts.empty? %>
+      <div id="sidebar-popular-posts" class="sidebar bordered">
+        <h3>Popular Posts</h3>
+        <ul>
+          <% popular_posts.each do |post| %>
+            <li> <%= link_to post.title, post_path(post) %> </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
   
     <% unless recent_posts.empty? %>
       <div id="sidebar-recent-posts" class="sidebar bordered">

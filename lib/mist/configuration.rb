@@ -19,6 +19,14 @@ module Mist::Configuration
     @authorizations ||= {}.with_indifferent_access
   end
   
+  def commit_meta_data
+    @commit_meta_data = true if @commit_meta_data.nil?
+  end
+  
+  def commit_meta_data=(a)
+    @commit_meta_data = a
+  end
+  
   # Register a block to be invoked whenever Mist needs to know if a user is allowed
   # to perform some action, such as :create_post, :edit_post, :view_post, :destroy_post,
   # or :all.

@@ -42,4 +42,14 @@ module PostsHelper
       result
     end
   end
+  
+  def popular_posts(count = 5)
+    # same as recent posts -- get twice as many and filter out the extras
+    @popular_posts ||= {}
+    @popular_posts[count] ||= begin
+      result = Post.most_popular(count*2).select { |post| post.published? }
+      result = result[0...count] if result.length > count
+      result
+    end
+  end
 end

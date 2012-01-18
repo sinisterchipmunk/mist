@@ -28,6 +28,12 @@ Given /^I have published these posts:$/ do |table|
     step 'I fill in "Title" with "%s"' % attributes['title']
     step 'I fill in "Content" with "%s"' % attributes['content']
     step 'I press "Save"'
+    
+    if attributes['popularity']
+      p = Post.last
+      p.popularity = attributes['popularity'].to_i
+      p.save!
+    end
   end
 end
 
