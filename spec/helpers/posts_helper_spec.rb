@@ -1,16 +1,26 @@
 require 'spec_helper'
 
-# Specs in this file have access to a helper object that includes
-# the PostsHelper. For example:
-#
-# describe PostsHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       helper.concat_strings("this","that").should == "this that"
-#     end
-#   end
-# end
 describe PostsHelper do
+  describe "with 7 posts" do
+    before do
+      %w(one two three four five six seven).each do |title|
+        Post.create!(:title => title, :content => "#{title} content", :published => true)
+      end
+    end
+    
+    it "should only return 5 posts" do
+      helper.recent_posts.should have(5).items
+    end
+    
+    it "should include the last 5 posts" do
+      helper.recent_posts[0].title.should == "seven"
+      helper.recent_posts[1].title.should == "six"
+      helper.recent_posts[2].title.should == "five"
+      helper.recent_posts[3].title.should == "four"
+      helper.recent_posts[4].title.should == "three"
+    end
+  end
+  
   describe "if authorized" do
     before { Mist.authorize(:create_post, :edit_post) { true } }
     

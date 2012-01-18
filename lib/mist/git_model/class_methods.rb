@@ -55,13 +55,17 @@ module Mist::GitModel::ClassMethods
   end
   
   def table_name
+    if name =~ /GitModel/
+      raise
+    end
     name.underscore.pluralize
   end
   
   def all
-    Dir[Mist.repository_location.join(table_name, '*')].collect do |dir|
-      load dir
-    end
+    # it's dangerous to rely on Dir[] because we have no guarantee of the
+    # returned order. Git will be more reliable.
+    files = Mist::GitFileSystemHistory.new(Mist.repository).find(nil, /^#{Regexp::escape table_name}\/?/)
+    files.collect! { |path| load Mist.repository_location.join(path) }
   end
   
   def load(path)
@@ -91,8 +95,10 @@ module Mist::GitModel::ClassMethods
     File.exist?(path) ? path : nil
   end
   
-  def last
-    all.last
+  def last(count = nil)
+    files = Mist::GitFileSystemHistory.new(Mist.repository).find(count || 1, /^#{Regexp::escape table_name}\/?/)
+    files.collect! { |path| load Mist.repository_location.join(path) }
+    count.nil? ? files.first : files
   end
   
   def create!(attributes = {})

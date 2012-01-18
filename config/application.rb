@@ -14,6 +14,7 @@ require 'git'
 module Mist
   require 'mist/configuration'
   require 'mist/repository'
+  require 'mist/version'
   
   extend Mist::Configuration
   extend Mist::Repository

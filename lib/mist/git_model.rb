@@ -1,6 +1,7 @@
 class Mist::GitModel
   require_dependency 'mist/git_model/attributes'
   require_dependency 'mist/git_model/class_methods'
+  require_dependency 'mist/git_file_system_history'
   
   extend ActiveModel::Callbacks
   extend ActiveModel::Naming
@@ -13,7 +14,7 @@ class Mist::GitModel
   define_model_callbacks :save, :create, :update, :initialize, :destroy
 
   delegate :table_name, :record_path, :default_attributes, :to => 'self.class'
-  attribute :id, :default => proc { (count + 1).to_s }
+  attribute :id, :default => proc { (self.class.count + 1).to_s }
   attribute :id_on_record
   
   validate do |record|
@@ -87,7 +88,7 @@ class Mist::GitModel
   def default_attributes!
     default_attributes.each do |key, value|
       if value.kind_of?(Proc)
-        attributes[key] = value.call
+        attributes[key] = instance_eval &value
       else
         attributes[key] = value
       end
@@ -111,7 +112,6 @@ class Mist::GitModel
       create_or_update_callback = new_record? ? :create : :update
       run_callbacks create_or_update_callback do
         run_callbacks :save do
-          FileUtils.mkdir_p File.dirname(path)
           Mist.repository.lib.mv path_was, path if !new_record? && id_changed?
           save_record_file
           commit
@@ -143,6 +143,7 @@ class Mist::GitModel
   
   def save_record_file
     self.id_on_record = id
+    FileUtils.mkdir_p File.dirname(path)
     File.open(path, "w") { |f| f.print attributes.to_yaml }
   end
   

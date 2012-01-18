@@ -10,9 +10,9 @@
   <%= yield :header %>
 
   <div id="sidebar">
-    <%= yield :sidebar_header %>
+    <%= yield :sidebar %>
   
-    <div class="sidebar bordered">
+    <div id="sidebar-similar-posts" class="sidebar bordered">
       <h3>Similar Posts</h3>
       <ul>
         <li> <%= link_to "Rolling the Dice", '/' %> </li>
@@ -20,7 +20,7 @@
       </ul>
     </div>
 
-    <div class="sidebar bordered">
+    <div id="sidebar-popular-posts" class="sidebar bordered">
       <h3>Popular Posts</h3>
       <ul>
         <li> <%= link_to "The Problem With The World Today", '/' %> </li>
@@ -28,17 +28,24 @@
       </ul>
     </div>
   
-    <div class="sidebar bordered">
-      <h3>Recent Posts</h3>
-      <ul>
-        <li> <%= link_to "Factory Girl Rocked My World", '/' %> </li>
-        <li> <%= link_to "Pushing Gems With Extreme Prejudice and Other Tales of Heroism and Hatred", '/' %> </li>
-      </ul>
-    </div>
+    <% unless recent_posts.empty? %>
+      <div id="sidebar-recent-posts" class="sidebar bordered">
+        <h3>Recent Posts</h3>
+        <ul>
+          <% recent_posts.each do |post| %>
+            <li> <%= link_to post.title, post_path(post) %> </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
   </div>
 
   <div class="content">
     <%= yield %>
+  </div>
+  
+  <div id="footer">
+    <p>Powered by <%= link_to "Mist", 'http://github.com/sinisterchipmunk/mist' %> <%= Mist::VERSION %></p>
   </div>
 </body>
 </html>

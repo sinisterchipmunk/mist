@@ -5,6 +5,49 @@ describe Mist::GitModel do
   let(:model_class) { Class.new(Mist::GitModel) { def self.name; "TestModel"; end } }
   subject { model_class.new }
   
+  describe "when no records ever existed" do
+    it "last record should be nil" do
+      model_class.last.should be_nil
+    end
+    
+    it "last 5 records should be empty" do
+      model_class.last(5).should be_empty
+    end
+  end
+  
+  describe "when 1 record exists" do
+    before { model_class.create! }
+    it "last record should be the record" do
+      model_class.last.should be_kind_of(model_class)
+    end
+    it "last 5 records should be 1-element" do
+      model_class.last(5).should have(1).record
+    end
+  end
+  
+  describe "when 2 records exist" do
+    before { model_class.create!; model_class.create! }
+    it "last record should be returned" do
+      model_class.last.should be_kind_of(model_class)
+    end
+    it 'last 5 records should contain 2' do
+      model_class.last(5).should have(2).records
+    end
+    it 'should return them in order, most recent first' do
+      model_class.last(5).collect { |i| i.id }.should == ['2', '1']
+    end
+  end
+  
+  describe "when 10 records exist" do
+    before { 10.times { model_class.create! } }
+    it "last 5 records should not exceed 5" do
+      model_class.last(5).should have(5).records
+    end
+    it 'should return them in order, most recent first' do
+      model_class.last(5).collect { |i| i.id }.should == ['10', '9', '8', '7', '6']
+    end
+  end
+  
   it "should underscore and pluralize #table_name" do
     subject.table_name.should == 'test_models'
   end
