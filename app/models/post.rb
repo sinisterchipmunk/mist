@@ -29,7 +29,7 @@ class Post < Mist::GitModel
   
   def self.most_popular(count)
     self[:popular_posts].sort { |(a_post_id, a_popularity), (b_post_id, b_popularity)|
-      1 - (a_popularity.to_i <=> b_popularity.to_i) # invert <=> so that result is descending order
+      -(a_popularity.to_i <=> b_popularity.to_i) # invert <=> so that result is descending order
     }.collect { |(post_id, popularity)| find post_id, :popularity => popularity }.reject { |i| i.nil? }
   end
   
