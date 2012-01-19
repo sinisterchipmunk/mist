@@ -20,7 +20,11 @@ class PostsController < ApplicationController
       format.atom do
         @title = "Posts"
         @posts = Post.all_by_publication_date
-        @updated = @posts.inject(Post.first.updated_at) { |date, post| date > post.updated_at ? date : post.updated_at }
+        unless @posts.empty?
+          @updated = @posts.inject(@posts.first.updated_at) do |date, post|
+            date > post.updated_at ? date : post.updated_at
+          end
+        end
         render :layout => false
       end
       format.rss { redirect_to feed_posts_path(:format => :atom), :status => :moved_permanently }
