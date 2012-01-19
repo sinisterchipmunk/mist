@@ -81,14 +81,14 @@ When the blog is rendered as HTML, the Gist is embedded directly into it.
 
 Gists are great because they allow other people to fork your code examples, recommend changes, comment on them, and so on. But they suddenly become really powerful if you adopt the convention of naming your code examples. Let's take the same example, with this change:
 
-  # Here is a header
+    # Here is a header
 
-  Here is a paragraph of post content
+    Here is a paragraph of post content
 
-      file: code_snippet.rb
-      def code_example_start
-        @code_counter += 1
-      end
+        file: code_snippet.rb
+        def code_example_start
+          @code_counter += 1
+        end
     
 Note the `file: ...` line. If Mist finds this line at the top of your code example, it will extract the filename and send it as the name of the example's particular file within the Gist. Then, GitHub will auto-detect the example's format from the file extension, and do all the syntax highlighting of your code when it is embedded!
 
