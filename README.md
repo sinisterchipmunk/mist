@@ -57,11 +57,7 @@ You can configure Mist with an initializer. Just create a file in `config/initia
       # GitHub credentials aren't really required, but Gists will be posted
       # anonymously and can't be edited unless credentials are given.
 
-## Under the Hood
-
-The rest of this README is dedicated to digging deeper into how Mist works, so that you too can feel the full power of Git-backed blogging!
-
-### Post Format
+## Post Format
 
 Mist posts use Markdown format. There's not much more to say about that, except concerning code examples.
 
@@ -92,12 +88,12 @@ Gists are great because they allow other people to fork your code examples, reco
     
 Note the `file: ...` line. If Mist finds this line at the top of your code example, it will extract the filename and send it as the name of the example's particular file within the Gist. Then, GitHub will auto-detect the example's format from the file extension, and do all the syntax highlighting of your code when it is embedded!
 
-#### Graceful Recovery
+### Graceful Recovery
 
 If the Gist cannot be found (GitHub is down or the Gist has been deleted), Mist will fall back to regular Markdown formatting for the code example. You'll lose syntax highlighting, but the code itself will still be formatted properly.
 
 
-### The Mist Repository
+## The Mist Repository
 
 By default, Mist keeps its git repository at `db/mist.repo.#{Rails.env}`. You can configure this by setting `Mist.repository_location` in `config/initializers/mist.rb` if you want.
 
