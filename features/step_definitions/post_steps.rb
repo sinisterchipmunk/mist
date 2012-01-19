@@ -28,6 +28,7 @@ Given /^I have published these posts:$/ do |table|
     step 'I fill in "Published at" with "%s"' % attributes['published_at']
     step 'I fill in "Title" with "%s"' % attributes['title']
     step 'I fill in "Content" with "%s"' % attributes['content']
+    step 'I fill in "Tags" with "%s"' % attributes['tags']
     step 'I press "Save"'
     
     if attributes['popularity']

@@ -4,6 +4,12 @@ Then /^the "([^"]*)" sidebar should contain:$/ do |which, table|
   end
 end
 
+Then /^the "([^"]*)" sidebar should not contain:$/ do |which, table|
+  table.hashes.each do |hash|
+    step 'the "%s" sidebar should not contain "%s"' % [which, hash['title']]
+  end
+end
+
 Then /^the "([^"]*)" sidebar should contain "([^"]*)"$/ do |which, content|
   id = "sidebar-#{which.gsub(/ /, '-')}"
   find('#'+id).should have_content(content)

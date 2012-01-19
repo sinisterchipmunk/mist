@@ -12,14 +12,6 @@
   <div id="sidebar">
     <%= yield :sidebar %>
   
-    <div id="sidebar-similar-posts" class="sidebar bordered">
-      <h3>Similar Posts</h3>
-      <ul>
-        <li> <%= link_to "Rolling the Dice", '/' %> </li>
-        <li> <%= link_to "What Makes Developers Tick", '/' %> </li>
-      </ul>
-    </div>
-
     <% unless popular_posts.empty? %>
       <div id="sidebar-popular-posts" class="sidebar bordered">
         <h3>Popular Posts</h3>

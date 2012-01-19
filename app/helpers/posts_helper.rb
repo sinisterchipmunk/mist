@@ -52,4 +52,9 @@ module PostsHelper
       result
     end
   end
+  
+  def similar_posts(count = 5)
+    @similar_posts ||= {}
+    @similar_posts[count] ||= @post.similar_posts(count)
+  end
 end

@@ -9,6 +9,19 @@ describe Post do
     proc { subject.content_as_html_preview }.should_not raise_error
   end
   
+  describe "tags" do
+    it "should save them" do
+      id = Post.create!(attributes_for(:post).merge(:tags => ['one', 'two', 'three'])).id
+      Post.find(id).tags.should == ['one', 'two', 'three']
+    end
+    
+    it "should split them out of a string" do
+      p = Post.new
+      p.tags = 'one, two three,four'
+      p.tags.should == ['one', 'two three', 'four']
+    end
+  end
+  
   describe "recent posts" do
     before do
       @order = [ 1.day.ago, 2.days.ago, 3.days.ago, 4.days.ago, 5.days.ago ]

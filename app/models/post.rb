@@ -3,6 +3,7 @@ require_dependency 'mist/git_model'
 require_dependency "mist/code_example_parser"
 
 class Post < Mist::GitModel
+  TAG_DELIM = /\s*,\s*/
   include Mist::Permalink
 
   validates_presence_of :title
@@ -20,6 +21,7 @@ class Post < Mist::GitModel
   attribute :published_at
   attribute :gist_id
   attribute :popularity, :default => 0
+  attribute :tags, :default => []
   
   before_validation { |r| r.id = permalink(r.title) unless r.title.blank? }
   after_validation :update_gist_if_necessary
@@ -41,6 +43,26 @@ class Post < Mist::GitModel
     load_existing_with_attribute :published_at, self[:published_at].sort { |a, b| -(a[1] <=> b[1]) }
   end
   
+  def self.matching_tags(tags)
+    matches = self[:tags].inject({}) { |h,(k,v)| ((t = v.split(TAG_DELIM)) & tags).size > 0 ? h[k] = t : nil; h }
+    load_existing_with_attribute :tags, matches.sort { |a, b| -((a[1] & tags).size <=> (b[1] & tags).size) }
+  end
+  
+  def similar_posts(max_count = nil)
+    self.class.matching_tags(tags).tap do |matching|
+      matching.delete self # similar does not mean identical :)
+      matching.pop while max_count && matching.length > max_count
+    end
+  end
+  
+  def tags=(t)
+    if t.kind_of?(String)
+      attributes[:tags] = t.split(TAG_DELIM)
+    else
+      attributes[:tags] = t
+    end
+  end
+  
   def update_meta
     if popularity_changed? || new_record?
       self.class[:popular_posts][id] = popularity
@@ -55,6 +77,13 @@ class Post < Mist::GitModel
       end
       self.class.save_meta_data :published_at
     end
+    
+    if tags.empty?
+      self.class[:tags].delete id
+    else
+      self.class[:tags][id] = tags.join(', ')
+    end
+    self.class.save_meta_data :tags
   end
   
   def title=(value)
