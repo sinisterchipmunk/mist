@@ -92,6 +92,8 @@ Gists are great because they allow other people to fork your code examples, reco
     
 Note the `file: ...` line. If Mist finds this line at the top of your code example, it will extract the filename and send it as the name of the example's particular file within the Gist. Then, GitHub will auto-detect the example's format from the file extension, and do all the syntax highlighting of your code when it is embedded!
 
+#### Graceful Recovery
+
 If the Gist cannot be found (GitHub is down or the Gist has been deleted), Mist will fall back to regular Markdown formatting for the code example. You'll lose syntax highlighting, but the code itself will still be formatted properly.
 
 
