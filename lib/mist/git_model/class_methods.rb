@@ -64,7 +64,6 @@ module Mist::GitModel::ClassMethods
   # Returns meta data for this model.
   def [](type)
     @meta ||= {}
-    # p @meta, meta_file_path(type), File.file?(meta_file_path(type)) ?  File.read(meta_file_path(type)) : nil
     @meta[type] ||= if File.file?(meta_file_path(type))
       YAML.load(File.read(meta_file_path(type))) || {}
     else
@@ -80,6 +79,9 @@ module Mist::GitModel::ClassMethods
       Mist.repository.add meta_file_path(type)
       Mist.repository.commit '%s meta changes to %s' % [type, table_name]
     end
+
+    # we must force meta to be reloaded because otherwise it could get out of sync with filesystem
+    @meta = nil
   end
   
   def meta_file_path(type)

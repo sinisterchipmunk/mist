@@ -37,7 +37,7 @@ module PostsHelper
     @recent_posts[count] ||= begin
       # without SQL, we don't have access to conveniences like Post.where(:published),
       # so instead just find 2x count and return those that are published.
-      result = Post.last(count*2).select { |post| post.published? }
+      result = Post.recently_published count*2
       result = result[0...count] if result.length > count
       result
     end

@@ -9,6 +9,21 @@ describe Post do
     proc { subject.content_as_html_preview }.should_not raise_error
   end
   
+  describe "recent posts" do
+    before do
+      @order = [ 1.day.ago, 2.days.ago, 3.days.ago, 4.days.ago, 5.days.ago ]
+      5.times { |i| Post.create!(:title => "title#{i}", :content => "content", :published_at => @order[i]) }
+    end
+    
+    it "should order by published_at descending" do
+      Post.recently_published(5)[0].published_at.should == @order[0]
+      Post.recently_published(5)[1].published_at.should == @order[1]
+      Post.recently_published(5)[2].published_at.should == @order[2]
+      Post.recently_published(5)[3].published_at.should == @order[3]
+      Post.recently_published(5)[4].published_at.should == @order[4]
+    end
+  end
+  
   describe "popularity" do
     before do
       subject.title = "post title"

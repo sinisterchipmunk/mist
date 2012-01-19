@@ -23,20 +23,37 @@ class Post < Mist::GitModel
   
   before_validation { |r| r.id = permalink(r.title) unless r.title.blank? }
   after_validation :update_gist_if_necessary
-  after_save :update_meta_popularity
+  after_save :update_meta
   after_initialize :load_code_examples_from_gist
   after_destroy :destroy_gist
   
-  def self.most_popular(count)
-    self[:popular_posts].sort { |(a_post_id, a_popularity), (b_post_id, b_popularity)|
-      -(a_popularity.to_i <=> b_popularity.to_i) # invert <=> so that result is descending order
-    }.collect { |(post_id, popularity)| find post_id, :popularity => popularity }.reject { |i| i.nil? }
+  def self.load_existing_with_attribute(attribute_name, array)
+    array.collect { |(post_id, attribute_value)| find post_id, attribute_name => attribute_value }.reject { |i| i.nil? }
   end
   
-  def update_meta_popularity
+  def self.most_popular(count)
+    # invert <=> so that result is descending order
+    load_existing_with_attribute :popularity, self[:popular_posts].sort { |a, b| -(a[1].to_i <=> b[1].to_i) }
+  end
+  
+  def self.recently_published(count)
+    # invert <=> so that result is descending order
+    load_existing_with_attribute :published_at, self[:published_at].sort { |a, b| -(a[1] <=> b[1]) }
+  end
+  
+  def update_meta
     if popularity_changed? || new_record?
       self.class[:popular_posts][id] = popularity
       self.class.save_meta_data :popular_posts
+    end
+    
+    if published_at_changed?
+      if published_at.blank?
+        self.class[:published_at].delete id
+      else
+        self.class[:published_at][id] = published_at
+      end
+      self.class.save_meta_data :published_at
     end
   end
   

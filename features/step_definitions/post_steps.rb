@@ -18,10 +18,11 @@ end
 Given /^I have published these posts:$/ do |table|
   hashes = table.hashes
   count = hashes.size
+  
   table.hashes.each_with_index do |hash, index|
     attributes = hash.reverse_merge({'title' => "post#{index}",
                                      'content' => "post#{index} content",
-                                     'published_at' => (index - count).minutes.ago})
+                                     'published_at' => (count - index).minutes.ago})
     step 'I am on the posts page'
     step 'I follow "New Post"'
     step 'I fill in "Published at" with "%s"' % attributes['published_at']
