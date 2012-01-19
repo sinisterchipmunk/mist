@@ -3,7 +3,7 @@ class Mist::PostsController < ApplicationController
   # GET /posts.json
   def index
     if Mist.authorized? :view_drafts, self
-      @posts = Mist::Post.last(20)
+      @posts = Mist::Post.last(20).reverse
     else
       @posts = Mist::Post.recently_published(20)
     end

@@ -273,14 +273,14 @@ describe Mist::Post do
         end
         
         it "should know its own url" do
-          subject.url.should == "http://example.com/mist/posts/code-example"
+          subject.url.should == "http://example.com/code-example"
         end
 
         describe "the gist description" do
           let(:desc) { subject.gist.description }
 
           it "include link to post" do
-            desc.should =~ /example.com\/mist\/posts\/code-example/
+            desc.should =~ /example.com\/code-example/
           end
 
           it "should not include code example filename" do
