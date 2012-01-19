@@ -7,12 +7,18 @@ A Git-powered, Gist-backed blogging engine for Rack / Ruby on Rails applications
 To go from zero to running as quickly as humanly possible, follow these steps:
 
   1. Generate rails project:
+  
          $ rails g my_project
+         
   2. Add `mist` gem and install bundle:
+  
          $ echo "gem 'mist', :git => 'http://github.com/sinisterchipmunk/mist'" >>Gemfile
          $ bundle install
+         
   3. Run the Mist installer:
+  
          $ rails g mist:setup
+         
   4. Visit http://localhost:3000/posts and enjoy!
   
 ## Authorization
