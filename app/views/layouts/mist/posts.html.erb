@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Mist</title>
-  <%= auto_discovery_link_tag :atom, feed_posts_path(:format => :atom) %>
+  <%= auto_discovery_link_tag :atom, feed_mist_posts_path(:format => :atom) %>
   <%= stylesheet_link_tag    "application" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
@@ -18,7 +18,7 @@
         <h3>Popular Posts</h3>
         <ul>
           <% popular_posts.each do |post| %>
-            <li> <%= link_to post.title, post_path(post) %> </li>
+            <li> <%= link_to post.title, mist_post_path(post) %> </li>
           <% end %>
         </ul>
       </div>
@@ -29,7 +29,7 @@
         <h3>Recent Posts</h3>
         <ul>
           <% recent_posts.each do |post| %>
-            <li> <%= link_to post.title, post_path(post) %> </li>
+            <li> <%= link_to post.title, mist_post_path(post) %> </li>
           <% end %>
         </ul>
       </div>

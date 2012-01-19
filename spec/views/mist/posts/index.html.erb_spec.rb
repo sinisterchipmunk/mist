@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "posts/index" do
+describe "mist/posts/index" do
   NUMBERS = %w(one two three four five six seven eight nine ten)
   
   before(:each) do

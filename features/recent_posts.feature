@@ -4,7 +4,7 @@ Feature: Recent posts
   I want to list the most recent posts in the sidebar
   
   Scenario: No posts yet
-    When I go to the posts page
+    When I go to the mist posts page
     Then I should not see "Recent"
   
   Scenario: Most recent of 7
@@ -17,7 +17,7 @@ Feature: Recent posts
       | five  |
       | six   |
       | seven |
-    When I go to the posts page
+    When I go to the mist posts page
     Then the "recent posts" sidebar should contain:
       | title |
       | seven |

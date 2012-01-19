@@ -1,7 +1,9 @@
 Mist::Application.routes.draw do
-  resources :posts do
-    collection do
-      get :feed
+  namespace :mist do
+    resources :posts do
+      collection do
+        get :feed
+      end
     end
   end
 

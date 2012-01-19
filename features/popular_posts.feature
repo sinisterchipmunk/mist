@@ -4,12 +4,12 @@ Feature: Popular Posts
   I want the most popular posts to appear in the sidebar
   
   Scenario: No posts yet
-    When I am on the posts page
+    When I am on the mist posts page
     Then I should not see "Popular"
   
   Scenario: One post, not viewed
     Given I have published a post called "Post title"
-    When I am on the posts page
+    When I am on the mist posts page
     Then the "popular posts" sidebar should contain "Post title"
     
   Scenario: Ordered posts of varying popularity
@@ -22,7 +22,7 @@ Feature: Popular Posts
       | five  |     7      |
       | six   |     0      |
       | seven |     8      |
-    When I am on the posts page
+    When I am on the mist posts page
     Then the "popular posts" sidebar should contain:
       | title |
       | one   |

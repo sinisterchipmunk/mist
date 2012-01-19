@@ -5,10 +5,10 @@ Feature: Authorization of Create new post
   
   Scenario: Create post without authorization
     Given I am not authorized
-    When  I am on the posts page
+    When  I am on the mist posts page
     Then  I should not see "New Post"
 
   Scenario: Create post with authorization
     Given I am authorized
-    When  I am on the posts page
+    When  I am on the mist posts page
     Then  I should see "New Post"

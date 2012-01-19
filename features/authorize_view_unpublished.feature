@@ -6,17 +6,17 @@ Feature: Authorize viewing unpublished posts
   Scenario: Shown to authorized when not published
     Given I am authorized
     When I create a post called "Post title"
-      And I am on the posts page
+      And I am on the mist posts page
     Then I should see "Post title"
     
   Scenario: Not shown to unauthorized when not published
     Given I have created a post called "Post title"
       And I am not authorized
-    When I am on the posts page
+    When I am on the mist posts page
     Then I should not see "Post title"
 
   Scenario: Become available when published
     Given I have published a post called "Post title"
       And I am not authorized
-    When I am on the posts page
+    When I am on the mist posts page
     Then I should see "Post title"

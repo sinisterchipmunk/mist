@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Post do
+describe Mist::Post do
   it "preview" do
     subject.content = "# This is a header and stuff\r\nHere's a paragraph, or it would be if
       I had anything much to talk about, but it's really not right now because I'm busy.
@@ -11,12 +11,12 @@ describe Post do
   
   describe "tags" do
     it "should save them" do
-      id = Post.create!(attributes_for(:post).merge(:tags => ['one', 'two', 'three'])).id
-      Post.find(id).tags.should == ['one', 'two', 'three']
+      id = Mist::Post.create!(attributes_for(:post).merge(:tags => ['one', 'two', 'three'])).id
+      Mist::Post.find(id).tags.should == ['one', 'two', 'three']
     end
     
     it "should split them out of a string" do
-      p = Post.new
+      p = Mist::Post.new
       p.tags = 'one, two three,four'
       p.tags.should == ['one', 'two three', 'four']
     end
@@ -25,15 +25,15 @@ describe Post do
   describe "recent posts" do
     before do
       @order = [ 1.day.ago, 2.days.ago, 3.days.ago, 4.days.ago, 5.days.ago ]
-      5.times { |i| Post.create!(:title => "title#{i}", :content => "content", :published_at => @order[i]) }
+      5.times { |i| Mist::Post.create!(:title => "title#{i}", :content => "content", :published_at => @order[i]) }
     end
     
     it "should order by published_at descending" do
-      Post.recently_published(5)[0].published_at.should == @order[0]
-      Post.recently_published(5)[1].published_at.should == @order[1]
-      Post.recently_published(5)[2].published_at.should == @order[2]
-      Post.recently_published(5)[3].published_at.should == @order[3]
-      Post.recently_published(5)[4].published_at.should == @order[4]
+      Mist::Post.recently_published(5)[0].published_at.should == @order[0]
+      Mist::Post.recently_published(5)[1].published_at.should == @order[1]
+      Mist::Post.recently_published(5)[2].published_at.should == @order[2]
+      Mist::Post.recently_published(5)[3].published_at.should == @order[3]
+      Mist::Post.recently_published(5)[4].published_at.should == @order[4]
     end
   end
   
@@ -50,7 +50,7 @@ describe Post do
     it "should not affect equality" do
       # a post is equal if its ID matches, nothing else matters.
       subject.save!
-      other = Post.last
+      other = Mist::Post.last
       
       subject.popularity = 1
       subject.save!
@@ -59,9 +59,9 @@ describe Post do
     end
     
     it "should order by descending popularity" do
-      5.times { |i| Post.create!(:title => "title#{i}", :content => "content", :popularity => i) }
+      5.times { |i| Mist::Post.create!(:title => "title#{i}", :content => "content", :popularity => i) }
       
-      popular = Post.most_popular(5)
+      popular = Mist::Post.most_popular(5)
       popular[0].popularity.should == 4
       popular[1].popularity.should == 3
       popular[2].popularity.should == 2
@@ -73,14 +73,14 @@ describe Post do
       before { subject.save! }
       
       it "should be included in popular posts" do
-        Post.most_popular(5).should include(subject)
+        Mist::Post.most_popular(5).should include(subject)
       end
       
       describe "and then deleting" do
         before { subject.destroy }
         
         it "should omit subject from popular posts" do
-          Post.most_popular(5).should be_empty
+          Mist::Post.most_popular(5).should be_empty
         end
       end
 
@@ -88,11 +88,11 @@ describe Post do
         before { subject.popularity = 5; subject.save! }
         
         it "should load the popularity" do
-          Post.find(subject.id).popularity.should == 5
+          Mist::Post.find(subject.id).popularity.should == 5
         end
         
         it "should return the post as among the most popular" do
-          Post.most_popular(5).should include(subject)
+          Mist::Post.most_popular(5).should include(subject)
         end
       end
     end
@@ -144,10 +144,10 @@ describe Post do
     describe "reloading the post later" do
       before do
         FakeWeb.register_uri(:get, 'https://api.github.com/gists/1', :response => fixture('gist_with_1_code_example'))
-        Post.create!(:title => 'Code Example', :content => "# Test Content\n\n    file: test.rb\n    def one\n      1\n    end\n\n# Moar test content")
+        Mist::Post.create!(:title => 'Code Example', :content => "# Test Content\n\n    file: test.rb\n    def one\n      1\n    end\n\n# Moar test content")
       end
       
-      subject { Post.find('code-example') }
+      subject { Mist::Post.find('code-example') }
       
       describe "changing its title" do
         before { subject.title = "new title" }
@@ -273,14 +273,14 @@ describe Post do
         end
         
         it "should know its own url" do
-          subject.url.should == "http://example.com/posts/code-example"
+          subject.url.should == "http://example.com/mist/posts/code-example"
         end
 
         describe "the gist description" do
           let(:desc) { subject.gist.description }
 
           it "include link to post" do
-            desc.should =~ /example.com\/posts\/code-example/
+            desc.should =~ /example.com\/mist\/posts\/code-example/
           end
 
           it "should not include code example filename" do
@@ -388,11 +388,11 @@ describe Post do
   
   describe "creation" do
     it "should return the post" do
-      Post.create!(attributes_for :post).should be_kind_of(Post)
+      Mist::Post.create!(attributes_for :post).should be_kind_of(Mist::Post)
     end
     
     it "should not be a new record" do
-      Post.create!(attributes_for :post).should_not be_new_record
+      Mist::Post.create!(attributes_for :post).should_not be_new_record
     end
   end
   
@@ -411,7 +411,7 @@ describe Post do
       it { should_not be_changed }
       
       it "should increase count" do
-        Post.count.should == 1
+        Mist::Post.count.should == 1
       end
 
       it "should have created an attribute file" do
@@ -423,7 +423,7 @@ describe Post do
       end
       
       it "should load the content in a separate query" do
-        Post.find(subject.id).content.should == subject.content
+        Mist::Post.find(subject.id).content.should == subject.content
       end
     end
   end
@@ -435,7 +435,7 @@ describe Post do
       before { subject.destroy }
       
       it "should not be found" do
-        Post.find(subject.id).should be_nil
+        Mist::Post.find(subject.id).should be_nil
       end
       
       it "should produce a commit" do
@@ -443,7 +443,7 @@ describe Post do
       end
       
       it "should reduce count" do
-        Post.count.should == 0
+        Mist::Post.count.should == 0
       end
     end
     
@@ -455,7 +455,7 @@ describe Post do
       end
       
       it "should load the new content in a separate query" do
-        Post.find(subject.id).content.should == "changed"
+        Mist::Post.find(subject.id).content.should == "changed"
       end
     end
     
@@ -508,7 +508,7 @@ describe Post do
       end
 
       it "should load the new content in a separate query" do
-        Post.find(subject.id).content.should == "changed"
+        Mist::Post.find(subject.id).content.should == "changed"
       end
     end
   end

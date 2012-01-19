@@ -2,7 +2,7 @@ require_dependency 'mist/permalink'
 require_dependency 'mist/git_model'
 require_dependency "mist/code_example_parser"
 
-class Post < Mist::GitModel
+class Mist::Post < Mist::GitModel
   TAG_DELIM = /\s*,\s*/
   include Mist::Permalink
 
@@ -205,7 +205,7 @@ class Post < Mist::GitModel
   end
   
   def url(options = {})
-    Mist::Application.routes.url_helpers.post_path(id, options.reverse_merge(:only_path => false))
+    Mist::Application.routes.url_helpers.mist_post_path(id, options.reverse_merge(:only_path => false))
   end
   
   def update_gist_if_necessary

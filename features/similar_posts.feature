@@ -15,7 +15,7 @@ Feature: Similar Posts
       | seven | t1, t2, t3, t4 |
       
   Scenario: Don't show similar posts on index page, because index is not a post
-    When I am on the posts page
+    When I am on the mist posts page
     Then I should not see "Similar"
   
   Scenario: Show similar posts in order of relevance

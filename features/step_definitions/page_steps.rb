@@ -19,7 +19,7 @@ When /^I press "([^"]*)"$/ do |arg1|
 end
 
 Then /^I should be on the (.*?) page$/ do |name|
-  page.current_url.should == "http://www.example.com/#{name}"
+  page.current_url.should == "http://www.example.com/mist/#{name}"
 end
 
 Then /^I should see "([^"]*)"$/ do |arg1|
@@ -27,7 +27,7 @@ Then /^I should see "([^"]*)"$/ do |arg1|
 end
 
 When /^I go to the (.*?) page$/ do |name|
-  visit "/#{name}"
+  visit send("#{name.gsub(/ /, '_')}_path")
 end
 
 Then /^I should not see "([^"]*)"$/ do |content|

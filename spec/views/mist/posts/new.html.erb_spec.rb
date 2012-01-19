@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "posts/new" do
+describe "mist/posts/new" do
   before(:each) do
     assign(:post, build(:post))
   end
@@ -9,7 +9,7 @@ describe "posts/new" do
     render
 
     # Run the generator again with the --webrat flag if you want to use webrat matchers
-    assert_select "form", :action => posts_path, :method => "post" do
+    assert_select "form", :action => mist_posts_path, :method => "post" do
     end
   end
 end

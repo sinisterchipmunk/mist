@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe PostsHelper do
+describe Mist::PostsHelper do
   describe "with 7 posts" do
     before do
       %w(one two three four five six seven).each do |title|
-        Post.create!(:title => title, :content => "#{title} content", :published => true)
+        Mist::Post.create!(:title => title, :content => "#{title} content", :published => true)
       end
     end
     
