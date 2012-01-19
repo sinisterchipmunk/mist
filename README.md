@@ -19,7 +19,7 @@ To go from zero to running as quickly as humanly possible, follow these steps:
   
          $ rails g mist:setup
          
-  4. Visit http://localhost:3000/posts and enjoy!
+  4. Visit [http://localhost:3000/posts](http://localhost:3000/posts) and enjoy!
   
 ## Authorization
 
