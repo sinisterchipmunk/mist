@@ -1,6 +1,6 @@
 <% content_for :sidebar do %>
   <div class="banner sidebar bordered">
-    <%= link_to Mist.title, mist_posts_path %>
+    <%= link_to Mist.title, posts_path %>
   </div>
 
   <% unless similar_posts.empty? %>
@@ -8,7 +8,7 @@
       <h3>Similar Posts</h3>
       <ul>
         <% similar_posts.each do |post| %>
-          <li> <%= link_to post.title, mist_post_path(post) %> </li>
+          <li> <%= link_to post.title, post_path(post) %> </li>
         <% end %>
       </ul>
     </div>

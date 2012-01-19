@@ -1,5 +1,5 @@
 Given /^I have created a post called "([^"]*)"$/ do |title|
-  step 'I am on the mist posts page'
+  step 'I am on the posts page'
   step 'I follow "New Post"'
   step 'I fill in "Title" with "%s"' % title
   step 'I fill in "Content" with "This is post content"'
@@ -7,7 +7,7 @@ Given /^I have created a post called "([^"]*)"$/ do |title|
 end
 
 Given /^I have published a post called "([^"]*)"$/ do |title|
-  step 'I am on the mist posts page'
+  step 'I am on the posts page'
   step 'I follow "New Post"'
   step 'I fill in "Published at" with "%s"' % Time.now
   step 'I fill in "Title" with "%s"' % title
@@ -23,7 +23,7 @@ Given /^I have published these posts:$/ do |table|
     attributes = hash.reverse_merge({'title' => "post#{index}",
                                      'content' => "post#{index} content",
                                      'published_at' => (count - index).minutes.ago})
-    step 'I am on the mist posts page'
+    step 'I am on the posts page'
     step 'I follow "New Post"'
     step 'I fill in "Published at" with "%s"' % attributes['published_at']
     step 'I fill in "Title" with "%s"' % attributes['title']
@@ -53,6 +53,6 @@ When /^I edit the "([^"]*)" post$/ do |post_title|
 end
 
 When /^I look at the "([^"]*)" post$/ do |post_title|
-  step 'I am on the mist posts page'
+  step 'I am on the posts page'
   step 'I follow "%s"' % post_title
 end

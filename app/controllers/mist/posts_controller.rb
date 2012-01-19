@@ -27,7 +27,7 @@ class Mist::PostsController < ApplicationController
         end
         render :layout => false
       end
-      format.rss { redirect_to feed_mist_posts_path(:format => :atom), :status => :moved_permanently }
+      format.rss { redirect_to feed_posts_path(:format => :atom), :status => :moved_permanently }
     end
   end
 
@@ -64,7 +64,7 @@ class Mist::PostsController < ApplicationController
   # POST /posts
   # POST /posts.json
   def create
-    @post = Mist::Post.new(params[:mist_post])
+    @post = Mist::Post.new(params[:post])
 
     respond_to do |format|
       if @post.save
@@ -83,7 +83,7 @@ class Mist::PostsController < ApplicationController
     @post = Mist::Post.find(params[:id])
 
     respond_to do |format|
-      if @post.update_attributes(params[:mist_post])
+      if @post.update_attributes(params[:post])
         format.html { redirect_to @post, :notice => 'Post was successfully updated.' }
         format.json { head :ok }
       else
@@ -100,7 +100,7 @@ class Mist::PostsController < ApplicationController
     @post.destroy
 
     respond_to do |format|
-      format.html { redirect_to mist_posts_url }
+      format.html { redirect_to posts_url }
       format.json { head :ok }
     end
   end

@@ -18,10 +18,10 @@ Feature: Update existing post
 
   Scenario: Destroy from main page when authorized
     Given I am authorized
-    When I am on the mist posts page
+    When I am on the posts page
     Then I should see "Destroy"
   
   Scenario: Destroy from main page when not authorized
     Given I am not authorized
-    When I am on the mist posts page
+    When I am on the posts page
     Then I should not see "Destroy"

@@ -1,5 +1,1 @@
-# Load the rails application
-require File.expand_path('../application', __FILE__)
-
-# Initialize the rails application
-Mist::Application.initialize!
+require File.expand_path('../spec/dummy_rails_app/config/environment', File.dirname(__FILE__))

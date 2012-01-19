@@ -9,20 +9,7 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
-require 'git'
-
 module Mist
-  require 'mist/configuration'
-  require 'mist/repository'
-  require 'mist/version'
-  
-  extend Mist::Configuration
-  extend Mist::Repository
-  
-  class << self
-    delegate :log, :to => :repository
-  end
-  
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

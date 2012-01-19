@@ -4,7 +4,7 @@ Feature: Create new post
   I want to create a post
   
   Scenario: Create new post from index
-    Given I am on the mist posts page
+    Given I am on the posts page
     When I follow "New Post"
       And I fill in "Title" with "Post title"
       And I fill in "Content" with "This is post content"

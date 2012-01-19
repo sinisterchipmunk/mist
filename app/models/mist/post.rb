@@ -205,7 +205,7 @@ class Mist::Post < Mist::GitModel
   end
   
   def url(options = {})
-    Mist::Application.routes.url_helpers.mist_post_path(id, options.reverse_merge(:only_path => false))
+    Mist::Engine.routes.url_helpers.post_path(id, options.reverse_merge(:only_path => false).reverse_merge(Rails.application.default_url_options))
   end
   
   def update_gist_if_necessary

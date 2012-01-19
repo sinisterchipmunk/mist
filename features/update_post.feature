@@ -14,6 +14,6 @@ Feature: Update existing post
     Then I should see "New title"
       And I should see "This is MOAR post content"
     
-    When I go to the mist posts page
+    When I go to the posts page
     Then I should see "New title"
       And I should not see "Post title"

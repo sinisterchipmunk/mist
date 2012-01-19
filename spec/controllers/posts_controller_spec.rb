@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Mist::PostsController do
-
   # This should return the minimal set of attributes required to create a valid
   # Post. As you add validations to Post, be sure to
   # update the return value of this method accordingly.
@@ -19,7 +18,7 @@ describe Mist::PostsController do
   describe "GET feed .rss" do
     it "redirects to feed .atom" do
       get :feed, {:format => :rss}, valid_session
-      response.should redirect_to(feed_mist_posts_path :format => :atom)
+      response.should redirect_to(feed_posts_path :format => :atom)
     end
   end
 
@@ -65,18 +64,18 @@ describe Mist::PostsController do
     describe "with valid params" do
       it "creates a new Post" do
         expect {
-          post :create, {:mist_post => valid_attributes}, valid_session
+          post :create, {:post => valid_attributes}, valid_session
         }.to change(Mist::Post, :count).by(1)
       end
 
       it "assigns a newly created post as @post" do
-        post :create, {:mist_post => valid_attributes}, valid_session
+        post :create, {:post => valid_attributes}, valid_session
         assigns(:post).should be_a(Mist::Post)
         assigns(:post).should be_persisted
       end
 
       it "redirects to the created post" do
-        post :create, {:mist_post => valid_attributes}, valid_session
+        post :create, {:post => valid_attributes}, valid_session
         response.should redirect_to(Mist::Post.last)
       end
     end
@@ -85,14 +84,14 @@ describe Mist::PostsController do
       it "assigns a newly created but unsaved post as @post" do
         # Trigger the behavior that occurs when invalid params are submitted
         Mist::Post.any_instance.stub(:save).and_return(false)
-        post :create, {:mist_post => {}}, valid_session
+        post :create, {:post => {}}, valid_session
         assigns(:post).should be_a_new(Mist::Post)
       end
 
       it "re-renders the 'new' template" do
         # Trigger the behavior that occurs when invalid params are submitted
         Mist::Post.any_instance.stub(:save).and_return(false)
-        post :create, {:mist_post => {}}, valid_session
+        post :create, {:post => {}}, valid_session
         response.should render_template("new")
       end
     end
@@ -107,18 +106,18 @@ describe Mist::PostsController do
         # receives the :update_attributes message with whatever params are
         # submitted in the request.
         Mist::Post.any_instance.should_receive(:update_attributes).with({'these' => 'params'})
-        put :update, {:id => post.to_param, :mist_post => {'these' => 'params'}}, valid_session
+        put :update, {:id => post.to_param, :post => {'these' => 'params'}}, valid_session
       end
 
       it "assigns the requested post as @post" do
         post = Mist::Post.create! valid_attributes
-        put :update, {:id => post.to_param, :mist_post => valid_attributes}, valid_session
+        put :update, {:id => post.to_param, :post => valid_attributes}, valid_session
         assigns(:post).should eq(post)
       end
 
       it "redirects to the post" do
         post = Mist::Post.create! valid_attributes
-        put :update, {:id => post.to_param, :mist_post => valid_attributes}, valid_session
+        put :update, {:id => post.to_param, :post => valid_attributes}, valid_session
         response.should redirect_to(post)
       end
     end
@@ -128,7 +127,7 @@ describe Mist::PostsController do
         post = Mist::Post.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
         Mist::Post.any_instance.stub(:save).and_return(false)
-        put :update, {:id => post.to_param, :mist_post => {}}, valid_session
+        put :update, {:id => post.to_param, :post => {}}, valid_session
         assigns(:post).should eq(post)
       end
 
@@ -136,7 +135,7 @@ describe Mist::PostsController do
         post = Mist::Post.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
         Mist::Post.any_instance.stub(:save).and_return(false)
-        put :update, {:id => post.to_param, :mist_post => {}}, valid_session
+        put :update, {:id => post.to_param, :post => {}}, valid_session
         response.should render_template("edit")
       end
     end
@@ -153,7 +152,7 @@ describe Mist::PostsController do
     it "redirects to the posts list" do
       post = Mist::Post.create! valid_attributes
       delete :destroy, {:id => post.to_param}, valid_session
-      response.should redirect_to(mist_posts_url)
+      response.should redirect_to(posts_path)
     end
   end
 

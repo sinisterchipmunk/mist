@@ -1,7 +1,7 @@
 <% content_for :header do %>
   <div id="header" class="bordered">
     <div class="banner">
-      <%= link_to Mist.title, mist_posts_path %>
+      <%= link_to Mist.title, posts_path %>
       
       <div class="author">
         with <%= mail_to Mist.author.email, Mist.author.name %>
@@ -9,7 +9,7 @@
     </div>
 
     <div class="admin">
-      <%= authorized_link :create_post, 'New Post', new_mist_post_path %>
+      <%= authorized_link :create_post, 'New Post', new_post_path %>
     </div>
   </div>
 <% end %>

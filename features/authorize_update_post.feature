@@ -18,11 +18,11 @@ Feature: Update existing post
 
   Scenario: Update from main page when authorized
     Given I am authorized
-    When I am on the mist posts page
+    When I am on the posts page
     Then I should see "Edit"
   
   Scenario: Update from main page when not authorized
     Given I am not authorized
-    When I am on the mist posts page
+    When I am on the posts page
     Then I should not see "Edit"
     
