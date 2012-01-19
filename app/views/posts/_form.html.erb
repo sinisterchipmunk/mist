@@ -29,7 +29,7 @@
     
     <div class="field">
       <%= f.label :tags %>
-      <%= f.text_field :tags %>
+      <%= f.text_field :tags, :value => @post.tags.join(', ') %>
     </div>
   </div>
 

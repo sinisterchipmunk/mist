@@ -39,6 +39,12 @@ class Post < Mist::GitModel
   end
   
   def self.recently_published(count)
+    all_by_publication_date.tap do |result|
+      result.pop while result.length > count
+    end
+  end
+  
+  def self.all_by_publication_date
     # invert <=> so that result is descending order
     load_existing_with_attribute :published_at, self[:published_at].sort { |a, b| -(a[1] <=> b[1]) }
   end

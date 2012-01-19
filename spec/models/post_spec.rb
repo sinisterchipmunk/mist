@@ -47,6 +47,17 @@ describe Post do
       subject.popularity.should == 0
     end
     
+    it "should not affect equality" do
+      # a post is equal if its ID matches, nothing else matters.
+      subject.save!
+      other = Post.last
+      
+      subject.popularity = 1
+      subject.save!
+      
+      subject.should == other
+    end
+    
     it "should order by descending popularity" do
       5.times { |i| Post.create!(:title => "title#{i}", :content => "content", :popularity => i) }
       

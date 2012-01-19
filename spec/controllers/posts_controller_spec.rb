@@ -15,10 +15,17 @@ describe PostsController do
   def valid_session
     {}
   end
+  
+  describe "GET feed .rss" do
+    it "redirects to feed .atom" do
+      get :feed, {:format => :rss}, valid_session
+      response.should redirect_to(feed_posts_path :format => :atom)
+    end
+  end
 
   describe "GET index" do
     it "assigns all posts as @posts" do
-      post = Post.create! valid_attributes
+      post = create :post, :published_at => Time.now
       get :index, {}, valid_session
       assigns(:posts).should eq([post])
     end
@@ -29,6 +36,13 @@ describe PostsController do
       post = Post.create! valid_attributes
       get :show, {:id => post.to_param}, valid_session
       assigns(:post).should eq(post)
+    end
+    
+    it "increments the post popularity" do
+      post = Post.create! valid_attributes
+      popularity = post.popularity
+      get :show, {:id => post.to_param}, valid_session
+      popularity.should be < Post.find(post.id).popularity
     end
   end
 

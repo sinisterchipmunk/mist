@@ -2,11 +2,28 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @posts = Post.recently_published(20)
+    if Mist.authorized? :view_drafts, self
+      @posts = Post.last(20)
+    else
+      @posts = Post.recently_published(20)
+    end
 
     respond_to do |format|
       format.html # index.html.erb
       format.json { render :json => @posts }
+    end
+  end
+  
+  # GET /posts/feed
+  def feed
+    respond_to do |format|
+      format.atom do
+        @title = "Posts"
+        @posts = Post.all_by_publication_date
+        @updated = @posts.inject(Post.first.updated_at) { |date, post| date > post.updated_at ? date : post.updated_at }
+        render :layout => false
+      end
+      format.rss { redirect_to feed_posts_path(:format => :atom), :status => :moved_permanently }
     end
   end
 
@@ -14,6 +31,9 @@ class PostsController < ApplicationController
   # GET /posts/1.json
   def show
     @post = Post.find(params[:id])
+    
+    @post.popularity += 1
+    @post.save!
 
     respond_to do |format|
       format.html # show.html.erb

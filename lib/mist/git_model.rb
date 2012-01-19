@@ -39,11 +39,7 @@ class Mist::GitModel
   end
   
   def ==(other)
-    if other.kind_of?(self.class)
-      attributes == other.attributes
-    else
-      id == other
-    end
+    id == (other.kind_of?(self.class) ? other.id : other)
   end
   
   def commit_message
