@@ -1,4 +1,6 @@
 module Mist::Configuration
+  require 'mist/configuration/author'
+
   def repository_location
     @respository_location ||= default_repository_location
   end
@@ -25,6 +27,18 @@ module Mist::Configuration
   
   def commit_meta_data=(a)
     @commit_meta_data = a
+  end
+  
+  def author
+    @author ||= Mist::Configuration::Author.new
+  end
+  
+  def title=(title)
+    @title = title
+  end
+  
+  def title
+    @title ||= "Blog Title"
   end
   
   # Register a block to be invoked whenever Mist needs to know if a user is allowed

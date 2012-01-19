@@ -1,6 +1,6 @@
 <% content_for :sidebar do %>
   <div class="banner sidebar bordered">
-    <%= link_to 'Blog Title', posts_path %>
+    <%= link_to Mist.title, posts_path %>
   </div>
 
   <% unless similar_posts.empty? %>
