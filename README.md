@@ -1,4 +1,4 @@
-# Mist
+# Mist [![Build Status](https://secure.travis-ci.org/sinisterchipmunk/mist.png)](http://travis-ci.org/sinisterchipmunk/mist)
 
 A Git-powered, Gist-backed blogging engine for Rack / Ruby on Rails applications.
 
