@@ -8,10 +8,11 @@
 /.bundle
 
 # Ignore the default SQLite database.
-/db/*.sqlite3
+spec/dummy_rails_app/db/*.sqlite3
 
 # Ignore all logfiles and tempfiles.
-/log/*.log
+spec/dummy_rails_app/log/*.log
 /tmp
+spec/dummy_rails_app/tmp
 spec/dummy_rails_app/db/mist.repo.*
 config/initializers/active_gist_credentials.rb
