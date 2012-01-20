@@ -13,5 +13,5 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
-/db/mist.repo.*
+spec/dummy_rails_app/db/mist.repo.*
 config/initializers/active_gist_credentials.rb
