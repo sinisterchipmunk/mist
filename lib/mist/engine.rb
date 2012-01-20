@@ -40,7 +40,7 @@ module Mist
           path = "/#{engine_name.underscore}#{route.path}"
           verb = route.verb.to_s.downcase.to_sym
           requirements = route.requirements
-          if path_helper = named_routes.key(route)
+          if path_helper = named_routes.respond_to?(:key) ? named_routes.key(route) : named_routes.index(route)
             requirements[:as] = path_helper
           elsif route.requirements[:controller].present?
             # Presume that all controllers referenced in routes should also be

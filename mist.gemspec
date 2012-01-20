@@ -20,8 +20,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'cucumber-rails',     '~> 1.2.1'
   s.add_development_dependency 'database_cleaner',   '~> 0.7.0'
   s.add_development_dependency 'rspec-rails',        '~> 2.8.1'
-  s.add_development_dependency 'factory_girl_rails', '~> 1.5.0'
   s.add_development_dependency 'fakeweb',            '~> 1.3.0'
+  # v1.5.0 has gemspec errors under ree, so force v1.4.0 until that's fixed
+  s.add_development_dependency 'factory_girl_rails', '=  1.4.0'
 
   s.rubyforge_project = "mist"
 
