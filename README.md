@@ -101,4 +101,6 @@ If the repository doesn't exist the first time Mist tries to read from or write 
 
 Because it's Git, you can jump into it and add remotes, create branches and check out, add tags -- and do pretty much whatever you like with it.
 
-By default, when you save a blog post, Mist won't push the repository to remote. If you'd like to change this, set the configuration option `Mist.push_posts = true`.
+### Pushing
+
+There is a plan to add to Mist the ability to automatically push posts after committing. However, this isn't implemented today. Instead, if you need this functionality then you should look into setting up a scheduled task that simply pushes the git repository at a regular interval. Unix and Mac users, see [cron](https://www.google.com/search?q=cron).
