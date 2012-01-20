@@ -1,0 +1,13 @@
+Description:
+    Installs Mist into your Rails application.
+    
+Next Steps:
+    After running this generator, edit config/initializers/mist.rb
+    and hook up your authentication so that you can control who is
+    or isn't allowed to change posts.
+    
+    Mist extracts its views and assets into your app/ directory.
+    You should personalize the look and feel of the blog by editing
+    those views.
+    
+
