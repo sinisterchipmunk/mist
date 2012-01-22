@@ -9,6 +9,12 @@ describe Mist::Post do
     proc { subject.content_as_html_preview }.should_not raise_error
   end
   
+  it "should call observer" do
+    subject.title = subject.content = "title"
+    Mist::PostSweeper.instance.should_receive(:after_save)
+    subject.save
+  end
+  
   describe "tags" do
     it "should save them" do
       id = Mist::Post.create!(attributes_for(:post).merge(:tags => ['one', 'two', 'three'])).id

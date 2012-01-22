@@ -9,6 +9,7 @@ class Mist::GitModel
   include ActiveModel::Validations::Callbacks
   include ActiveModel::Dirty
   include ActiveModel::Conversion
+  include ActiveModel::Observing
   extend Mist::GitModel::ClassMethods
   
   define_model_callbacks :save, :create, :update, :initialize, :destroy

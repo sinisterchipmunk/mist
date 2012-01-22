@@ -1,9 +1,9 @@
 Given /^I am on the (.*?) page$/ do |name|
-  visit send("#{name.gsub(/ /, '_')}_path")
+  visit Mist::Engine.routes.url_helpers.send("#{name.gsub(/ /, '_')}_path")
 end
 
 Given /^I am on the (.*?) page in "([^"]*)" format$/ do |name, format|
-  visit send("#{name.gsub(/ /, '_')}_path", :format => format)
+  visit Mist::Engine.routes.url_helpers.send("#{name.gsub(/ /, '_')}_path", :format => format)
 end
 
 When /^I follow "([^"]*)"$/ do |arg1|
@@ -27,7 +27,7 @@ Then /^I should see "([^"]*)"$/ do |arg1|
 end
 
 When /^I go to the (.*?) page$/ do |name|
-  visit send("#{name.gsub(/ /, '_')}_path")
+  visit Mist::Engine.routes.url_helpers.send("#{name.gsub(/ /, '_')}_path")
 end
 
 Then /^I should not see "([^"]*)"$/ do |content|

@@ -25,7 +25,7 @@ describe Mist::PostsController do
   describe "GET index" do
     it "assigns all posts as @posts" do
       post = create :post, :published_at => Time.now
-      get :index, {}, valid_session
+      get :index, {:use_route => :mist}, valid_session
       assigns(:posts).should eq([post])
     end
   end

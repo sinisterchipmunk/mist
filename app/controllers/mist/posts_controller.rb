@@ -1,11 +1,15 @@
 class Mist::PostsController < ApplicationController
+  # caches_action :feed, :show, :layout => false
+  caches_action :index
+  cache_sweeper Mist::PostSweeper
+  
   # GET /posts
   # GET /posts.json
   def index
     if Mist.authorized? :view_drafts, self
-      @posts = Mist::Post.last(20).reverse
+      @posts = posts_from_cache('mist/posts/last_20_with_drafts') { Mist::Post.last(20).reverse }
     else
-      @posts = Mist::Post.recently_published(20)
+      @posts = posts_from_cache('mist/posts/most_recent_20_published') { Mist::Post.recently_published(20) }
     end
 
     respond_to do |format|
@@ -102,6 +106,19 @@ class Mist::PostsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to posts_url }
       format.json { head :ok }
+    end
+  end
+  
+  private
+  def posts_from_cache(key)
+    return yield
+    
+    if ids = Rails.cache.fetch(key)
+      return ids.collect { |id| Mist::Post.find id }
+    else
+      yield.tap do |posts|
+        Rails.cache.write(key, posts.collect { |p| p.id })
+      end
     end
   end
 end
