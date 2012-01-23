@@ -6,7 +6,6 @@
 
 require File.expand_path('../../spec/dummy_rails_app/config/environment', File.dirname(__FILE__))
 Rails.application.config.cache_classes = true
-Rails.application.config.action_controller.perform_caching = false
 require 'cucumber/rails'
 
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
