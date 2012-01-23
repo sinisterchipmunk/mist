@@ -12,10 +12,10 @@ Gem::Specification.new do |s|
   s.summary     = %q{TODO: summary}
   s.description = %q{TODO: description}
 
-  s.add_dependency 'git',           '~> 1.2.5'
-  s.add_dependency 'github-markup', '~> 0.7.0'
-  s.add_dependency 'redcarpet',     '~> 2.0.1'
-  s.add_dependency 'activegist',    '~> 0.6.0'
+  s.add_dependency 'git',           '~> 1.2'
+  s.add_dependency 'github-markup', '~> 0.7'
+  s.add_dependency 'redcarpet',     '~> 2.0'
+  s.add_dependency 'activegist',    '~> 0.6'
   
   s.add_development_dependency 'cucumber-rails',     '~> 1.2.1'
   s.add_development_dependency 'database_cleaner',   '~> 0.7.0'

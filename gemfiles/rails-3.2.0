@@ -1,4 +1,4 @@
 common = File.expand_path('common', File.dirname(__FILE__))
 eval File.read(common), binding, common
 
-gem 'rails', '~> 3.2.0.rc2'
+gem 'rails', '= 3.2.0'
