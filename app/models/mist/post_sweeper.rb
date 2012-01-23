@@ -12,7 +12,7 @@ class Mist::PostSweeper < ActionController::Caching::Sweeper
   def bust!(post)
     expire_action :action => 'index'
     expire_action :action => 'index', :admin => true
-    expire_action :action => 'feed', :format => 'atom'
-    expire_action :action => 'show', :id => post.id
+    expire_page   :action => 'feed', :format => 'atom'
+    expire_page   :action => 'show', :id => post.id
   end
 end

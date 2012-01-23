@@ -27,14 +27,35 @@ module CacheHelpers
     CacheMatcher.new(:action_cached?)
   end
   
-  def page_cached
+  def be_page_cached
     CacheMatcher.new(:page_cached?)
+  end
+
+  def posts_cache_path(options = {})
+    ActionController::Caching::Actions::ActionCachePath.new(controller, options.merge(:only_path => true)).path
+  end
+  
+  def show_post_cache_path
+    posts_cache_path :action => 'show', :id => @post.id
+  end
+  
+  def posts_feed_cache_path
+    posts_cache_path :action => 'feed', :format => 'atom'
+  end
+  
+  def self.included(base)
+    base.class_eval do
+      before do
+        path = File.dirname(File.expand_path(ActionController::Base.page_cache_path('/posts/index')))
+        FileUtils.rm_rf path
+      end
+    end
   end
 end
 
 class String
   def action_cached?
-    Rails.cache.exist?(File.join 'views', self)
+    Rails.cache.exist?(File.join 'views', 'www.example.com', self)
   end
 
   def page_cached?

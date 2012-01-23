@@ -1,8 +1,7 @@
 class Mist::PostsController < ApplicationController
   before_filter :bump_post_popularity, :only => :show
-  caches_action :index, :cache_path => proc { index_cache_path }, :layout => false
-  caches_action :feed
-  caches_action :new, :show, :layout => false
+  caches_action :index, :cache_path => proc { index_cache_path }
+  caches_page :feed, :show
   cache_sweeper Mist::PostSweeper
   
   # GET /posts

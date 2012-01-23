@@ -14,10 +14,6 @@ describe "Posts cache" do
     ActionController::Base.perform_caching = false
   end
   
-  def posts_cache_path(options = {})
-    ActionController::Caching::Actions::ActionCachePath.new(controller, options).path
-  end
-  
   describe "busting" do
     it "should happen when a post is created" do
       Mist::PostSweeper.instance.should_receive(:bust!)
@@ -44,10 +40,6 @@ describe "Posts cache" do
   end
   
   describe "GET /posts/show" do
-    def show_post_cache_path
-      posts_cache_path(:action => 'show', :id => @post.id)
-    end
-    
     before do
       post posts_path, :post => attributes_for(:post)
       @post = Mist::Post.last
@@ -94,19 +86,14 @@ describe "Posts cache" do
   describe "GET /posts/new" do
     before { posts_cache_path(:action => 'new').should_not be_cached } # sanity check
     
-    it "should prime the cache" do
+    # it's never cached because of the form's auth token
+    it "should not prime the cache" do
       get new_post_path
-      posts_cache_path(:action => 'new').should be_cached
+      posts_cache_path(:action => 'new').should_not be_cached
     end
-    
-    # and it's never swept because the form is basically static.
   end
   
   describe "GET /posts/feed" do
-    def posts_feed_cache_path
-      posts_cache_path(:action => 'feed', :format => 'atom')
-    end
-    
     before { posts_feed_cache_path.should_not be_cached } # sanity check
     
     it "should prime the cache" do
