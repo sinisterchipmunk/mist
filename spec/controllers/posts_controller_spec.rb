@@ -41,7 +41,7 @@ describe Mist::PostsController do
       post = Mist::Post.create! valid_attributes
       popularity = post.popularity
       get :show, {:id => post.to_param}, valid_session
-      popularity.should be < Mist::Post.find(post.id).popularity
+      popularity.should be < Mist::Post.popularity_for(post.id)
     end
   end
 

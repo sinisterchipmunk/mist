@@ -7,6 +7,9 @@ module Mist
   require 'mist/configuration'
   require 'mist/repository'
   require 'mist/version'
+  require 'mist/permalink'
+  require 'mist/git_model'
+  require "mist/code_example_parser"
   
   extend Mist::Configuration
   extend Mist::Repository

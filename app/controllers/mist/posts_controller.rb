@@ -1,15 +1,17 @@
 class Mist::PostsController < ApplicationController
-  # caches_action :feed, :show, :layout => false
-  caches_action :index
+  before_filter :bump_post_popularity, :only => :show
+  caches_action :index, :cache_path => proc { index_cache_path }, :layout => false
+  caches_action :feed
+  caches_action :new, :show, :layout => false
   cache_sweeper Mist::PostSweeper
   
   # GET /posts
   # GET /posts.json
   def index
     if Mist.authorized? :view_drafts, self
-      @posts = posts_from_cache('mist/posts/last_20_with_drafts') { Mist::Post.last(20).reverse }
+      @posts = Mist::Post.last(20).reverse
     else
-      @posts = posts_from_cache('mist/posts/most_recent_20_published') { Mist::Post.recently_published(20) }
+      @posts = Mist::Post.recently_published(20)
     end
 
     respond_to do |format|
@@ -38,10 +40,7 @@ class Mist::PostsController < ApplicationController
   # GET /posts/1
   # GET /posts/1.json
   def show
-    @post = Mist::Post.find(params[:id])
-    
-    @post.popularity += 1
-    @post.save!
+    @post ||= Mist::Post.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -110,15 +109,16 @@ class Mist::PostsController < ApplicationController
   end
   
   private
-  def posts_from_cache(key)
-    return yield
-    
-    if ids = Rails.cache.fetch(key)
-      return ids.collect { |id| Mist::Post.find id }
+  def index_cache_path
+    if Mist.authorized?(:view_drafts, self)
+      { :admin => true }
     else
-      yield.tap do |posts|
-        Rails.cache.write(key, posts.collect { |p| p.id })
-      end
+      {}
     end
+  end
+  
+  def bump_post_popularity
+    @post = Mist::Post.find(params[:id])
+    Mist::Post.increase_popularity(@post) if @post
   end
 end

@@ -1,7 +1,3 @@
-require_dependency 'mist/permalink'
-require_dependency 'mist/git_model'
-require_dependency "mist/code_example_parser"
-
 class Mist::Post < Mist::GitModel
   TAG_DELIM = /\s*,\s*/
   include Mist::Permalink
@@ -36,6 +32,16 @@ class Mist::Post < Mist::GitModel
   def self.most_popular(count)
     # invert <=> so that result is descending order
     load_existing_with_attribute :popularity, self[:popular_posts].sort { |a, b| -(a[1].to_i <=> b[1].to_i) }
+  end
+  
+  def self.increase_popularity(post)
+    self[:popular_posts][post.id] = popularity_for(post.id) + 1
+    save_meta_data :popular_posts
+    post.popularity = self[:popular_posts][post.id]
+  end
+  
+  def self.popularity_for(post_id)
+    self[:popular_posts][post_id] || 0
   end
   
   def self.recently_published(count)

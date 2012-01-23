@@ -1,7 +1,7 @@
 class Mist::GitModel
-  require_dependency 'mist/git_model/attributes'
-  require_dependency 'mist/git_model/class_methods'
-  require_dependency 'mist/git_file_system_history'
+  require 'mist/git_model/attributes'
+  require 'mist/git_model/class_methods'
+  require 'mist/git_file_system_history'
   
   extend ActiveModel::Callbacks
   extend ActiveModel::Naming
