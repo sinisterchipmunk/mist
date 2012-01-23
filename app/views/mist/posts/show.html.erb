@@ -2,17 +2,6 @@
   <div class="banner sidebar bordered">
     <%= link_to Mist.title, posts_path %>
   </div>
-
-  <% unless similar_posts.empty? %>
-    <div id="sidebar-similar-posts" class="sidebar bordered">
-      <h3>Similar Posts</h3>
-      <ul>
-        <% similar_posts.each do |post| %>
-          <li> <%= link_to post.title, post_path(post) %> </li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
 <% end %>
 
 <% content_for :subcaption do %>

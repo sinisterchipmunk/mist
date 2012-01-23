@@ -54,6 +54,7 @@ module Mist::PostsHelper
   end
   
   def similar_posts(count = 5)
+    return [] if @post.nil?
     @similar_posts ||= {}
     @similar_posts[count] ||= @post.similar_posts(count)
   end
