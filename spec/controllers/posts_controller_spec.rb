@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Mist::PostsController do
+  before { Mist.authorize :all do true end }
+  
   # This should return the minimal set of attributes required to create a valid
   # Post. As you add validations to Post, be sure to
   # update the return value of this method accordingly.
@@ -31,14 +33,37 @@ describe Mist::PostsController do
   end
 
   describe "GET show" do
+    describe "draft while unauthorized" do
+      before { Mist.authorize(:view_drafts) { false } }
+      
+      it "does not assign the requested post as @post" do
+        post = Mist::Post.create! valid_attributes
+        get :show, {:id => post.to_param}, valid_session
+        assigns(:post).should eq(post)
+      end
+
+      it "does not increment the post popularity" do
+        post = Mist::Post.create! valid_attributes
+        popularity = post.popularity
+        get :show, {:id => post.to_param}, valid_session
+        popularity.should == Mist::Post.popularity_for(post.id)
+      end
+      
+      it "redirects out" do
+        post = Mist::Post.create! valid_attributes
+        get :show, {:id => post.to_param}, valid_session
+        response.should redirect_to(posts_path)
+      end
+    end
+    
     it "assigns the requested post as @post" do
-      post = Mist::Post.create! valid_attributes
+      post = Mist::Post.create! valid_attributes.merge(:published => true)
       get :show, {:id => post.to_param}, valid_session
       assigns(:post).should eq(post)
     end
     
     it "increments the post popularity" do
-      post = Mist::Post.create! valid_attributes
+      post = Mist::Post.create! valid_attributes.merge(:published_at => Time.now)
       popularity = post.popularity
       get :show, {:id => post.to_param}, valid_session
       popularity.should be < Mist::Post.popularity_for(post.id)
@@ -46,6 +71,16 @@ describe Mist::PostsController do
   end
 
   describe "GET new" do
+    describe "while unauthorized" do
+      before { Mist.authorize(:create_post) { false } }
+      
+      it "should redirect" do
+        post = Mist::Post.create! valid_attributes
+        get :new, {}, valid_session
+        response.status.should redirect_to(posts_path)
+      end
+    end
+    
     it "assigns a new post as @post" do
       get :new, {}, valid_session
       assigns(:post).should be_a_new(Mist::Post)
@@ -53,6 +88,16 @@ describe Mist::PostsController do
   end
 
   describe "GET edit" do
+    describe "while unauthorized" do
+      before { Mist.authorize(:update_post) { false } }
+      
+      it "should redirect" do
+        post = Mist::Post.create! valid_attributes
+        get :edit, {:id => post.to_param}, valid_session
+        response.status.should redirect_to(posts_path)
+      end
+    end
+    
     it "assigns the requested post as @post" do
       post = Mist::Post.create! valid_attributes
       get :edit, {:id => post.to_param}, valid_session
@@ -61,6 +106,26 @@ describe Mist::PostsController do
   end
 
   describe "POST create" do
+    describe "while unauthorized" do
+      before { Mist.authorize(:create_post) { false } }
+      
+      it "should not create a new post" do
+        expect {
+          post :create, {:post => valid_attributes}, valid_session
+        }.to_not change(Mist::Post, :count).by(1)
+      end
+      
+      it "should not assign post" do
+        post :create, {:post => valid_attributes}, valid_session
+        assigns(:post).should_not be_a(Mist::Post)
+      end
+      
+      it "should redirect out" do
+        post :create, {:post => valid_attributes}, valid_session
+        response.should redirect_to(posts_path)
+      end
+    end
+
     describe "with valid params" do
       it "creates a new Post" do
         expect {
@@ -99,6 +164,28 @@ describe Mist::PostsController do
 
   describe "PUT update" do
     describe "with valid params" do
+      describe "while unauthorized" do
+        before { Mist.authorize(:update_post) { false } }
+
+        it "should not update the post" do
+          post = Mist::Post.create! valid_attributes
+          Mist::Post.any_instance.should_not_receive(:update_attributes).with({'these' => 'params'})
+          put :update, {:id => post.to_param, :post => {'these' => 'params'}}, valid_session
+        end
+
+        it "should not assign post" do
+          post = Mist::Post.create! valid_attributes
+          put :update, {:id => post.to_param, :post => valid_attributes}, valid_session
+          assigns(:post).should_not be_a(Mist::Post)
+        end
+
+        it "should redirect out" do
+          post = Mist::Post.create! valid_attributes
+          put :update, {:id => post.to_param, :post => valid_attributes}, valid_session
+          response.should redirect_to(posts_path)
+        end
+      end
+
       it "updates the requested post" do
         post = Mist::Post.create! valid_attributes
         # Assuming there are no other posts in the database, this
@@ -142,6 +229,23 @@ describe Mist::PostsController do
   end
 
   describe "DELETE destroy" do
+    describe "while unauthorized" do
+      before { Mist.authorize(:destroy_post) { false } }
+
+      it "does not destroy the requested post" do
+        post = Mist::Post.create! valid_attributes
+        expect {
+          delete :destroy, {:id => post.to_param}, valid_session
+        }.to_not change(Mist::Post, :count).by(-1)
+      end
+
+      it "redirects to the posts list" do
+        post = Mist::Post.create! valid_attributes
+        delete :destroy, {:id => post.to_param}, valid_session
+        response.should redirect_to(posts_path)
+      end
+    end
+
     it "destroys the requested post" do
       post = Mist::Post.create! valid_attributes
       expect {

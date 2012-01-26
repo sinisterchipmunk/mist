@@ -53,6 +53,7 @@ class Mist::PostsController < ActionController::Base
   # GET /posts/new
   # GET /posts/new.json
   def new
+    redirect_to posts_path and return unless Mist.authorized?(:create_post, self)
     @post = Mist::Post.new
 
     respond_to do |format|
@@ -63,12 +64,14 @@ class Mist::PostsController < ActionController::Base
 
   # GET /posts/1/edit
   def edit
+    redirect_to posts_path and return unless Mist.authorized?(:update_post, self)
     @post = Mist::Post.find(params[:id])
   end
 
   # POST /posts
   # POST /posts.json
   def create
+    redirect_to posts_path and return unless Mist.authorized?(:create_post, self)
     @post = Mist::Post.new(params[:post])
 
     respond_to do |format|
@@ -85,6 +88,7 @@ class Mist::PostsController < ActionController::Base
   # PUT /posts/1
   # PUT /posts/1.json
   def update
+    redirect_to posts_path and return unless Mist.authorized?(:update_post, self)
     @post = Mist::Post.find(params[:id])
 
     respond_to do |format|
@@ -101,6 +105,7 @@ class Mist::PostsController < ActionController::Base
   # DELETE /posts/1
   # DELETE /posts/1.json
   def destroy
+    redirect_to posts_path and return unless Mist.authorized?(:destroy_post, self)
     @post = Mist::Post.find(params[:id])
     @post.destroy
 
@@ -120,6 +125,7 @@ class Mist::PostsController < ActionController::Base
   
   def bump_post_popularity
     @post = Mist::Post.find(params[:id])
+    redirect_to posts_path and return unless @post.published? || Mist.authorized?(:view_drafts, self)
     Mist::Post.increase_popularity(@post) if @post
   end
 end
