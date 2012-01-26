@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Colin MacKenzie IV"]
   s.email       = ["sinisterchipmunk@gmail.com"]
   s.homepage    = "http://github.com/sinisterchipmunk/mist"
-  s.summary     = %q{TODO: summary}
-  s.description = %q{TODO: description}
+  s.summary     = %q{a git-powered, gist-backed blogging engine for Rails 3}
+  s.description = %q{a git-powered, gist-backed blogging engine for Rails 3}
 
   s.add_dependency 'git',           '~> 1.2'
   s.add_dependency 'github-markup', '~> 0.7'
