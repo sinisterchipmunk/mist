@@ -5,7 +5,7 @@ rvm:
   - ree
   # - jruby
   - ruby-head
-  - rbx-2.0
+  # - rbx-2.0
 
 gemfile:
   - gemfiles/rails-3.1.3
