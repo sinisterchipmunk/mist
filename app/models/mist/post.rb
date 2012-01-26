@@ -63,7 +63,9 @@ class Mist::Post < Mist::GitModel
   def similar_posts(max_count = nil)
     self.class.matching_tags(tags).tap do |matching|
       matching.delete self # similar does not mean identical :)
-      matching.pop while max_count && matching.length > max_count
+      while max_count && matching.length > max_count
+        matching.pop
+      end
     end
   end
   

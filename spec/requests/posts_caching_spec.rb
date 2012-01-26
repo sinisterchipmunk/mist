@@ -110,44 +110,41 @@ describe "Posts cache" do
 
   describe "GET /posts" do
     before { posts_cache_path.should_not be_cached } # sanity check
+
+    # now handled in cucumber
     
-    describe "when not logged in" do
-      it "should prime the cache" do
-        get posts_path
-        posts_cache_path.should be_cached
-      end
-      
-      it "should be busted by a new post" do
-        get posts_path
-        post posts_path, :post => attributes_for(:post)
-        posts_cache_path.should_not be_cached
-      end
-      
-      it "should not use the private cache" do
-        get posts_path
-        posts_cache_path(:admin => true).should_not be_cached
-      end
-    end
-    
-    describe "when logged in" do
-      before { Mist.authorize { true } }
-      before { posts_cache_path(:admin => true).should_not be_cached }
-      
-      it "should not use the public cache" do
-        get posts_path
-        posts_cache_path.should_not be_cached
-      end
-      
-      it "should prime the cache" do
-        get posts_path
-        posts_cache_path(:admin => true).should be_cached
-      end
-      
-      it "should be busted by a new post" do
-        get posts_path
-        post posts_path, :post => attributes_for(:post)
-        posts_cache_path(:admin => true).should_not be_cached
-      end
-    end
+    # describe "when not logged in" do
+    #   it "should prime the cache" do
+    #     get posts_path
+    #     posts_cache_path.should be_cached
+    #   end
+    #   
+    #   it "should be busted by a new post" do
+    #     get posts_path
+    #     post posts_path, :post => attributes_for(:post)
+    #     posts_cache_path.should_not be_cached
+    #   end
+    # end
+    # 
+    # describe "when logged in" do
+    #   before { Mist.authorize { true } }
+    #   before { posts_cache_path(:admin => true).should_not be_cached }
+    #   
+    #   it "should not use the public cache" do
+    #     get posts_path
+    #     posts_cache_path.should_not be_cached
+    #   end
+    #   
+    #   it "should prime the cache" do
+    #     get posts_path
+    #     posts_cache_path(:admin => true).should be_cached
+    #   end
+    #   
+    #   it "should be busted by a new post" do
+    #     get posts_path
+    #     post posts_path, :post => attributes_for(:post)
+    #     posts_cache_path(:admin => true).should_not be_cached
+    #   end
+    # end
   end
 end

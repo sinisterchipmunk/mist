@@ -4,18 +4,4 @@
   </div>
 <% end %>
 
-<% content_for :subcaption do %>
-  <p id="notice"><%= notice %></p>
-<% end %>
-
 <%= render :partial => 'post', :locals => { :post => @post, :preview => false } %>
-
-<div class="other-posts">
-  <div id="previous-post">
-    <%= link_to "Rolling the Dice", '/' %>
-  </div>
-
-  <div id="next-post">
-    <%= link_to "What Makes Developers Tick", '/' %>
-  </div>
-</div>

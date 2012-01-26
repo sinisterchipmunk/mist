@@ -16,5 +16,11 @@ module Mist
   
   class << self
     delegate :log, :to => :repository
+    
+    # Returns an array of all possible actions which Mist will authorize against
+    # at one point or another
+    def authorized_actions
+      [ :create_post, :edit_post, :destroy_post, :view_drafts ]
+    end
   end
 end

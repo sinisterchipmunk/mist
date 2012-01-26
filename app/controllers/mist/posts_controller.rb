@@ -1,7 +1,10 @@
-class Mist::PostsController < ApplicationController
+class Mist::PostsController < ActionController::Base
+  protect_from_forgery
+  # caches_action :index, :cache_path => proc { cache_path }
+  caches_page :feed
+  caches_page :index, :cache_path => proc { cache_path }
+  caches_action :show, :cache_path => proc { cache_path }
   before_filter :bump_post_popularity, :only => :show
-  caches_action :index, :cache_path => proc { index_cache_path }
-  caches_page :feed, :show
   cache_sweeper Mist::PostSweeper
   
   # GET /posts
@@ -108,11 +111,10 @@ class Mist::PostsController < ApplicationController
   end
   
   private
-  def index_cache_path
-    if Mist.authorized?(:view_drafts, self)
-      { :admin => true }
-    else
-      {}
+  def cache_path
+    options = Mist.authorized_actions.inject(ActiveSupport::OrderedHash.new) do |hash, key|
+      hash[key] = true if Mist.authorized?(key, self)
+      hash
     end
   end
   

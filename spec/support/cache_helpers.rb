@@ -48,6 +48,9 @@ module CacheHelpers
       before do
         path = File.dirname(File.expand_path(ActionController::Base.page_cache_path('/posts/index')))
         FileUtils.rm_rf path
+        
+        path = File.expand_path('../dummy_rails_app/public/posts.html', File.dirname(__FILE__))
+        FileUtils.rm path if File.exist?(path)
       end
     end
   end
