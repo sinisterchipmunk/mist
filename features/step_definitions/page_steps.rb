@@ -19,7 +19,7 @@ When /^I press "([^"]*)"$/ do |arg1|
 end
 
 Then /^I should be on the (.*?) page$/ do |name|
-  page.current_url.should == "http://www.example.com/mist/#{name}"
+  page.current_url.should =~ /^http:\/\/www.example.com\/#{name}\/?/
 end
 
 Then /^I should see "([^"]*)"$/ do |arg1|

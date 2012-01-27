@@ -1,5 +1,15 @@
-<h1>New post</h1>
+<%= render :partial => 'sidebar_title' %>
 
-<%= render 'form' %>
-
-<%= link_to 'Back', posts_path %>
+<div class="post bordered">
+  <div class="title">
+    <h1>
+      New post
+    </h1>
+  </div>
+  
+  <p>
+    <%= link_to 'Back', posts_path %>
+  </p>
+  
+  <%= render 'form' %>
+</div>

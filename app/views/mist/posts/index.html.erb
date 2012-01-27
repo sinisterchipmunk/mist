@@ -14,4 +14,18 @@
   </div>
 <% end %>
 
-<%= render_posts %>
+<% if @posts.empty? %>
+  <div class="post bordered">
+    <div class="title">
+      <h1>
+        o hai!
+      </h1>
+    </div>
+
+    <p>
+      Welcome to my new blog! I'll have some decent content up in no time &mdash; promise!
+    </p>
+  </div>
+<% else %>
+  <%= render_posts %>
+<% end %>
