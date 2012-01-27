@@ -63,7 +63,11 @@ describe Mist::Post do
   describe "recent posts" do
     before do
       @order = [ 1.day.ago, 2.days.ago, 3.days.ago, 4.days.ago, 5.days.ago ]
-      5.times { |i| Mist::Post.create!(:title => "title#{i}", :content => "content", :published_at => @order[i]) }
+      Mist::Post.create!(:title => "title0", :content => "content", :published_at => @order[0])
+      Mist::Post.create!(:title => "title2", :content => "content", :published_at => @order[2])
+      Mist::Post.create!(:title => "title4", :content => "content", :published_at => @order[4])
+      Mist::Post.create!(:title => "title1", :content => "content", :published_at => @order[1])
+      Mist::Post.create!(:title => "title3", :content => "content", :published_at => @order[3])
     end
     
     it "should order by published_at descending" do
