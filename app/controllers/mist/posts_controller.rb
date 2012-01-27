@@ -1,5 +1,4 @@
-class Mist::PostsController < ActionController::Base
-  protect_from_forgery
+class Mist::PostsController < ApplicationController
   # caches_action :index, :cache_path => proc { cache_path }
   caches_page :feed
   caches_page :index, :cache_path => proc { cache_path }
