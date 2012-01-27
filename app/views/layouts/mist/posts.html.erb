@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mist</title>
+  <title>
+    <%= Mist.title %>
+    <% if @post %>
+      - <%= @post.title %>
+    <% end %>
+  </title>
+  
   <%= auto_discovery_link_tag :atom, feed_posts_path(:format => :atom) %>
   <%= stylesheet_link_tag    "mist_core"  %>
   <%= stylesheet_link_tag    "mist"       %>
