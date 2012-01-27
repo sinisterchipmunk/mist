@@ -38,7 +38,9 @@ See the documentation for Mist::Configuration for much more detailed information
 
 ## Views
 
-When you run the `mist:setup` generator, Mist places its views into your app (`app/views/mist`, `app/assets/javascripts/mist`, `app/assets/stylesheets/mist`, etc.). You should seriously consider modifying these views, if only so you have a personalized site layout.
+When you run the `mist:setup` generator, Mist creates a layout file at `app/views/layouts/mist/posts.html.erb` and some assets at `app/assets/javascripts/mist.js` and `app/assets/stylesheets/mist.css.scss`. Though not strictly required, you should seriously consider modifying these views, if only so you have a personalized site layout.
+
+If you would like complete control over all of the Mist view templates, run the `mist:views` generator, which will copy all of Mist's views and assets into `app/`, where you can then customize them to your heart's content.
 
 ## Tweaking
 

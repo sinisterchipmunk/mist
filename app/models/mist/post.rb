@@ -56,6 +56,7 @@ class Mist::Post < Mist::GitModel
   end
   
   def self.matching_tags(tags)
+    return [] if tags.blank?
     matches = self[:tags].inject({}) { |h,(k,v)| ((t = v.split(TAG_DELIM)) & tags).size > 0 ? h[k] = t : nil; h }
     load_existing_with_attribute :tags, matches.sort { |a, b| -((a[1] & tags).size <=> (b[1] & tags).size) }
   end
@@ -92,10 +93,10 @@ class Mist::Post < Mist::GitModel
       self.class.save_meta_data :published_at
     end
     
-    if tags.empty?
-      self.class[:tags].delete id
-    else
+    if tags && !tags.empty?
       self.class[:tags][id] = tags.join(', ')
+    else
+      self.class[:tags].delete id
     end
     self.class.save_meta_data :tags
   end

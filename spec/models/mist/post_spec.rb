@@ -15,6 +15,38 @@ describe Mist::Post do
     subject.save
   end
   
+  describe "Mist::Post#matching_tags" do
+    before do
+      Mist::Post.create!(attributes_for(:post).merge(:title => 'one', :tags => 'one'))
+      Mist::Post.create!(attributes_for(:post).merge(:title => 'two', :tags => 'two'))
+      Mist::Post.create!(attributes_for(:post).merge(:title => 'four', :tags => nil))
+    end
+    
+    it "should return empty array if given nil" do
+      Mist::Post.matching_tags(nil).should be_empty
+    end
+    
+    it "should return empty array if given empty string" do
+      Mist::Post.matching_tags([""]).should be_empty
+    end
+    
+    it "should handle a single matching" do
+      Mist::Post.matching_tags(["one"]).should have(1).post
+    end
+    
+    it "should handle a single not matching" do
+      Mist::Post.matching_tags(["three"]).should be_empty
+    end
+    
+    it "should handle multiple matching" do
+      Mist::Post.matching_tags(['one', 'two']).should have(2).posts
+    end
+    
+    it "should handle multiple matching and not matching" do
+      Mist::Post.matching_tags(['one', 'three']).should have(1).post
+    end
+  end
+  
   describe "tags" do
     it "should save them" do
       id = Mist::Post.create!(attributes_for(:post).merge(:tags => ['one', 'two', 'three'])).id
