@@ -31,27 +31,39 @@ describe Mist::PostsController do
       assigns(:posts).should eq([post])
     end
     
-    describe "with 7 posts" do
+    describe "with posts" do
       before do
-        @one   = create(:post, :title => "one",   :published_at => 1.day.ago)
-        @two   = create(:post, :title => "two",   :published_at => 5.days.ago)
-        @three = create(:post, :title => "three", :published_at => 1.day.from_now)
-        @four  = create(:post, :title => "four",  :published_at => nil)
-        @five  = create(:post, :title => "five",  :published_at => 2.days.from_now)
-        @six   = create(:post, :title => "six",   :published_at => Time.now)
-        @seven = create(:post, :title => "seven", :published_at => 2.days.ago)
+        post :create, :post => attributes_for(:post, :title => "one",   :published_at => '01-26-2012')
+        post :create, :post => attributes_for(:post, :title => "two",   :published_at => '01-22-2012')
+        post :create, :post => attributes_for(:post, :title => "three", :published_at => '01-29-2012')
+        post :create, :post => attributes_for(:post, :title => "four",  :published_at => nil)
+        post :create, :post => attributes_for(:post, :title => "five",  :published_at => '01-30-2012')
+        post :create, :post => attributes_for(:post, :title => "six",   :published_at => '01-28-2012')
+        post :create, :post => attributes_for(:post, :title => "seven", :published_at => '01-25-2012')
+        post :create, :post => attributes_for(:post, :title => "eight", :published_at => "09-24-2010")
+        post :create, :post => attributes_for(:post, :title => "nine",  :published_at => "01-27-2012")
+        
+        @one = Mist::Post.find("one")
+        @two = Mist::Post.find("two")
+        @three = Mist::Post.find("three")
+        @four = Mist::Post.find("four")
+        @five = Mist::Post.find("five")
+        @six = Mist::Post.find("six")
+        @seven = Mist::Post.find("seven")
+        @eight = Mist::Post.find("eight")
+        @nine = Mist::Post.find("nine")
       end
       
       it "assigns the posts in order" do
         get :index, {:use_route => :mist}, valid_session
-        assigns(:posts).collect { |p| p.id }.should eq([@four.id, @five.id, @three.id, @six.id, @one.id, @seven.id, @two.id])
+        assigns(:posts).collect { |p| p.id }.should eq([@four.id, @five.id, @three.id, @six.id, @nine.id, @one.id, @seven.id, @two.id, @eight.id])
       end
       
       describe "when not authorized" do
         before { Mist.authorize { false } }
         it "assigns the posts in order, omitting unpublished" do
           get :index, {:use_route => :mist}, valid_session
-          assigns(:posts).collect { |p| p.id }.should eq([@five.id, @three.id, @six.id, @one.id, @seven.id, @two.id])
+          assigns(:posts).collect { |p| p.id }.should eq([@five.id, @three.id, @six.id, @nine.id, @one.id, @seven.id, @two.id, @eight.id])
         end
       end
     end

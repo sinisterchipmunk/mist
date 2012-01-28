@@ -67,6 +67,7 @@ class Mist::PostsController < ApplicationController
   # POST /posts.json
   def create
     redirect_to posts_path and return unless Mist.authorized?(:create_post, self)
+    coerce_date(params[:post], 'published_at')
     @post = Mist::Post.new(params[:post])
 
     respond_to do |format|
@@ -87,6 +88,7 @@ class Mist::PostsController < ApplicationController
     @post = Mist::Post.find(params[:id])
 
     respond_to do |format|
+      coerce_date(params[:post], 'published_at')
       if @post.update_attributes(params[:post])
         format.html { redirect_to @post, :notice => 'Post was successfully updated.' }
         format.json { head :ok }
@@ -111,6 +113,21 @@ class Mist::PostsController < ApplicationController
   end
   
   private
+  def coerce_date(hash, key)
+    date = hash[key]
+    unless date.respond_to?(:strftime) || date.blank?
+      if date =~ /^.{2}-.{2}-.{4}$/
+        hash[key] = DateTime.strptime(date, "%m-%d-%Y")
+      elsif date =~ /^.{4}-.{2}-.{2}/
+        hash[key] = DateTime.strptime(date, "%Y-%m-%d")
+      else
+        hash[key] = DateTime.strptime(date, "%a %b %d %H:%M:%S %z %Y")
+      end
+    end
+  rescue
+    raise "Couldn't parse date: #{date.inspect}"
+  end
+  
   def cache_path
     options = Mist.authorized_actions.inject(ActiveSupport::OrderedHash.new) do |hash, key|
       hash[key] = true if Mist.authorized?(key, self)

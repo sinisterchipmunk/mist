@@ -9,14 +9,14 @@ Feature: Recent posts
   
   Scenario: Most recent of 7
     Given I have published these posts:
-      | title |
-      | one   | 
-      | two   |
-      | three |
-      | four  |
-      | five  |
-      | six   |
-      | seven |
+      | title | published_at |
+      | one   | 01-01-2011 |
+      | two   | 01-02-2011 |
+      | three | 01-03-2011 |
+      | four  | 01-04-2011 |
+      | five  | 01-05-2011 |
+      | six   | 01-06-2011 |
+      | seven | 01-07-2011 |
     When I go to the posts page
     Then the "recent posts" sidebar should contain:
       | title |
