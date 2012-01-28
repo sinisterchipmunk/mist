@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mist (0.6.1)
+    mist (0.6.2)
       activegist (~> 0.6)
       git (~> 1.2)
       github-markup (~> 0.7)
