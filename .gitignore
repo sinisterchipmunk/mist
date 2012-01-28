@@ -17,3 +17,4 @@ spec/dummy_rails_app/tmp
 spec/dummy_rails_app/db/mist.repo.*
 config/initializers/active_gist_credentials.rb
 pkg
+.rvmrc
