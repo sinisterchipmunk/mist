@@ -61,7 +61,10 @@ class Mist::Post < Mist::GitModel
         end
       end
 
-      publications.select! { |(post, publish_date)| !publish_date.blank? } unless include_unpublished
+      unless include_unpublished
+        publications = publications.select { |(post, publish_date)| !publish_date.blank? }
+      end
+      
       load_existing_with_attribute :published_at, publications
     end
   

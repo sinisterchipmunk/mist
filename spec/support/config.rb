@@ -5,7 +5,7 @@ end
 module MistControllerSpecOverrides
   def self.included(base)
     base.class_eval do
-      unless instance_methods.include?(:__get)
+      unless instance_methods.include?(:__get) || instance_methods.include?('__get')
         %w(get post put delete).each do |m|
           eval <<-end_code, binding, __FILE__, __LINE__ + 1
             alias __#{m} #{m}
