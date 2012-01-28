@@ -25,40 +25,51 @@ class Mist::Post < Mist::GitModel
   after_initialize :load_code_examples_from_gist
   after_destroy :destroy_gist
   
-  def self.load_existing_with_attribute(attribute_name, array)
-    array.collect { |(post_id, attribute_value)| find post_id, attribute_name => attribute_value }.reject { |i| i.nil? }
-  end
-  
-  def self.most_popular(count)
-    # invert <=> so that result is descending order
-    load_existing_with_attribute :popularity, self[:popular_posts].sort { |a, b| -(a[1].to_i <=> b[1].to_i) }
-  end
-  
-  def self.increase_popularity(post)
-    self[:popular_posts][post.id] = popularity_for(post.id) + 1
-    save_meta_data :popular_posts
-    post.popularity = self[:popular_posts][post.id]
-  end
-  
-  def self.popularity_for(post_id)
-    self[:popular_posts][post_id] || 0
-  end
-  
-  def self.recently_published(count)
-    all_by_publication_date.tap do |result|
-      result.pop while result.length > count
+  class << self
+    def load_existing_with_attribute(attribute_name, array)
+      array.collect { |(post_id, attribute_value)| find post_id, attribute_name => attribute_value }.reject { |i| i.nil? }
     end
-  end
   
-  def self.all_by_publication_date
-    # invert <=> so that result is descending order
-    load_existing_with_attribute :published_at, self[:published_at].sort { |a, b| -(a[1] <=> b[1]) }
-  end
+    def most_popular(count)
+      # invert <=> so that result is descending order
+      load_existing_with_attribute :popularity, self[:popular_posts].sort { |a, b| -(a[1].to_i <=> b[1].to_i) }
+    end
   
-  def self.matching_tags(tags)
-    return [] if tags.blank?
-    matches = self[:tags].inject({}) { |h,(k,v)| ((t = v.split(TAG_DELIM)) & tags).size > 0 ? h[k] = t : nil; h }
-    load_existing_with_attribute :tags, matches.sort { |a, b| -((a[1] & tags).size <=> (b[1] & tags).size) }
+    def increase_popularity(post)
+      self[:popular_posts][post.id] = popularity_for(post.id) + 1
+      save_meta_data :popular_posts
+      post.popularity = self[:popular_posts][post.id]
+    end
+  
+    def popularity_for(post_id)
+      self[:popular_posts][post_id] || 0
+    end
+  
+    def recently_published(count, include_unpublished = false)
+      recent = all_by_publication_date(include_unpublished)
+      recent.tap do |result|
+        result.pop while result.length > count
+      end
+    end
+  
+    def all_by_publication_date(include_unpublished = false)
+      publications = self[:published_at].sort do |(ka,va), (kb,vb)|
+        if va.nil?
+          vb.nil? ? 0 : -1
+        else
+          vb.nil? ? 1 : -(va <=> vb)
+        end
+      end
+
+      publications.select! { |(post, publish_date)| !publish_date.blank? } unless include_unpublished
+      load_existing_with_attribute :published_at, publications
+    end
+  
+    def matching_tags(tags)
+      return [] if tags.blank?
+      matches = self[:tags].inject({}) { |h,(k,v)| ((t = v.split(TAG_DELIM)) & tags).size > 0 ? h[k] = t : nil; h }
+      load_existing_with_attribute :tags, matches.sort { |a, b| -((a[1] & tags).size <=> (b[1] & tags).size) }
+    end
   end
   
   def similar_posts(max_count = nil)
@@ -84,12 +95,8 @@ class Mist::Post < Mist::GitModel
       self.class.save_meta_data :popular_posts
     end
     
-    if published_at_changed?
-      if published_at.blank?
-        self.class[:published_at].delete id
-      else
-        self.class[:published_at][id] = published_at
-      end
+    if published_at_changed? || new_record?
+      self.class[:published_at][id] = published_at
       self.class.save_meta_data :published_at
     end
     

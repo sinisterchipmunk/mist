@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Mist::PostsController do
-  before { Mist.authorize :all do true end }
+  before { Mist.authorize { true } }
   
   # This should return the minimal set of attributes required to create a valid
   # Post. As you add validations to Post, be sure to
@@ -29,6 +29,31 @@ describe Mist::PostsController do
       post = create :post, :published_at => Time.now
       get :index, {:use_route => :mist}, valid_session
       assigns(:posts).should eq([post])
+    end
+    
+    describe "with 7 posts" do
+      before do
+        @one   = create(:post, :title => "one",   :published_at => 1.day.ago)
+        @two   = create(:post, :title => "two",   :published_at => 5.days.ago)
+        @three = create(:post, :title => "three", :published_at => 1.day.from_now)
+        @four  = create(:post, :title => "four",  :published_at => nil)
+        @five  = create(:post, :title => "five",  :published_at => 2.days.from_now)
+        @six   = create(:post, :title => "six",   :published_at => Time.now)
+        @seven = create(:post, :title => "seven", :published_at => 2.days.ago)
+      end
+      
+      it "assigns the posts in order" do
+        get :index, {:use_route => :mist}, valid_session
+        assigns(:posts).collect { |p| p.id }.should eq([@four.id, @five.id, @three.id, @six.id, @one.id, @seven.id, @two.id])
+      end
+      
+      describe "when not authorized" do
+        before { Mist.authorize { false } }
+        it "assigns the posts in order, omitting unpublished" do
+          get :index, {:use_route => :mist}, valid_session
+          assigns(:posts).collect { |p| p.id }.should eq([@five.id, @three.id, @six.id, @one.id, @seven.id, @two.id])
+        end
+      end
     end
   end
 
