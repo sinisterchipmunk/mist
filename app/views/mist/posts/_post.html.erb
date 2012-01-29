@@ -6,7 +6,7 @@
 
     <%= authorized_links admin_link_separator,
                          [:edit_post, 'Edit', edit_post_path(post.id)],
-                         [:destroy_post, 'Destroy', post.id, {:confirm => 'Are you sure?', :method => :delete}] %>
+                         [:destroy_post, 'Destroy', post_path(post.id), {:confirm => 'Are you sure?', :method => :delete}] %>
   </div>
 
   <%= yield :subcaption %>
