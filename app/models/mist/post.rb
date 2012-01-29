@@ -54,10 +54,10 @@ class Mist::Post < Mist::GitModel
   
     def all_by_publication_date(include_unpublished = false)
       publications = self[:published_at].sort do |(ka,va), (kb,vb)|
-        if va.nil?
-          vb.nil? ? 0 : -1
+        if va.blank?
+          vb.blank? ? 0 : -1
         else
-          vb.nil? ? 1 : -(va <=> vb)
+          vb.blank? ? 1 : -(va <=> vb)
         end
       end
 

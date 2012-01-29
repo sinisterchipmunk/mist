@@ -42,6 +42,7 @@ describe Mist::PostsController do
         post :create, :post => attributes_for(:post, :title => "seven", :published_at => '01-25-2012')
         post :create, :post => attributes_for(:post, :title => "eight", :published_at => "09-24-2010")
         post :create, :post => attributes_for(:post, :title => "nine",  :published_at => "01-27-2012")
+        post :create, :post => attributes_for(:post, :title => "ten",   :published_at => "")
         
         @one = Mist::Post.find("one")
         @two = Mist::Post.find("two")
@@ -52,11 +53,12 @@ describe Mist::PostsController do
         @seven = Mist::Post.find("seven")
         @eight = Mist::Post.find("eight")
         @nine = Mist::Post.find("nine")
+        @ten = Mist::Post.find("ten")
       end
       
       it "assigns the posts in order" do
         get :index, {:use_route => :mist}, valid_session
-        assigns(:posts).collect { |p| p.id }.should eq([@four.id, @five.id, @three.id, @six.id, @nine.id, @one.id, @seven.id, @two.id, @eight.id])
+        assigns(:posts).collect { |p| p.id }.should eq([@ten.id, @four.id, @five.id, @three.id, @six.id, @nine.id, @one.id, @seven.id, @two.id, @eight.id])
       end
       
       describe "when not authorized" do
